@@ -6,8 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.michaelsvit.kolnoa.dummy.DummyContent.DummyItem;
-
 import java.util.List;
 
 /**
@@ -15,9 +13,9 @@ import java.util.List;
  */
 public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private final List<Movie> mValues;
 
-    public MovieRecyclerViewAdapter(List<DummyItem> items) {
+    public MovieRecyclerViewAdapter(List<Movie> items) {
         mValues = items;
     }
 
@@ -31,8 +29,8 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+//        holder.mIdView.setText(mValues.get(position).id);
+//        holder.mContentView.setText(mValues.get(position).content);
 
         //holder.mView.setOnClickListener
     }
@@ -46,7 +44,7 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;
-        public DummyItem mItem;
+        public Movie mItem;
 
         public ViewHolder(View view) {
             super(view);

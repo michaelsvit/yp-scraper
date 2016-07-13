@@ -1,24 +1,17 @@
 package com.michaelsvit.kolnoa;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
-import com.michaelsvit.kolnoa.dummy.DummyContent;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.util.List;
 
 /**
  * A fragment representing a list of Items.
@@ -27,8 +20,9 @@ public class MovieGridFragment extends Fragment {
 
     private static final String ARG_CINEMA = "cinema";
 
-    private Cinema cinema;
     private int columnCount = 2;
+    private Cinema cinema;
+    private List<Movie> movies;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -54,7 +48,7 @@ public class MovieGridFragment extends Fragment {
         }
 
         // TODO: remove
-        new FetchMoviesTask().execute(cinema);
+        fetchMovies();
     }
 
     @Override
@@ -63,22 +57,43 @@ public class MovieGridFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_movies_grid, container, false);
 
         // Set the adapter
-        if (view instanceof RecyclerView) {
+        /*if (view instanceof RecyclerView) {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
             recyclerView.setLayoutManager(new GridLayoutManager(context, columnCount));
-            recyclerView.setAdapter(new MovieRecyclerViewAdapter(DummyContent.ITEMS));
-        }
+            recyclerView.setAdapter(new MovieRecyclerViewAdapter(movies));
+        }*/
         return view;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        fetchMovies();
+        //fetchMovies();
     }
 
     private void fetchMovies() {
+        class JSInterface{
+            @JavascriptInterface
+            public void processHTML(String html){
+                Log.d("TEST", html);
+            }
+        }
+        final WebView webView = new WebView(getActivity());
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.addJavascriptInterface(new JSInterface(), "Android");
+
+        webView.setWebViewClient(new WebViewClient(){
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                if(webView.getProgress() == 100){
+                    webView.loadUrl("javascript:window.Android.processHTML("
+                            + "'<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');");
+                }
+            }
+        });
+        webView.loadUrl(cinema.getUrl().toString());
 
     }
 
@@ -88,46 +103,14 @@ public class MovieGridFragment extends Fragment {
         @Override
         protected String doInBackground(Cinema... cinemas) {
             // TODO: check internet connection
-            if(cinemas.length == 0){
-                return null;
-            }
 
-            URL url = cinema.getUrl();
-            InputStream is = null;
-            try {
-                is = getInputStream(url);
-                char[] buffer = getString(is);
-                Log.d(LOG_TAG, new String(buffer));
-                return new String(buffer);
+            /*try {
+                Document document = Jsoup.connect("http://www.yesplanet.co.il/movies").get();
+                Log.d("TEST", document.toString());
             } catch (IOException e) {
                 e.printStackTrace();
-            } finally {
-                if (is != null) {
-                    try {
-                        is.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
+            }*/
             return null;
-        }
-
-        private char[] getString(InputStream is) throws IOException {
-            Reader reader;
-            reader = new InputStreamReader(is, "UTF-8");
-            char[] buffer = new char[10000];
-            reader.read(buffer);
-            return buffer;
-        }
-
-        private InputStream getInputStream(URL url) throws IOException {
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(10000); // milisec
-            conn.setConnectTimeout(15000); // milisec
-            conn.setRequestMethod("GET");
-            conn.connect();
-            return conn.getInputStream();
         }
     }
 }
