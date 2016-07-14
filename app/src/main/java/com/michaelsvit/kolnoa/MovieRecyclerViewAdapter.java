@@ -13,10 +13,10 @@ import java.util.List;
  */
 public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecyclerViewAdapter.ViewHolder> {
 
-    private final List<Movie> mValues;
+    private final List<Movie> movies;
 
-    public MovieRecyclerViewAdapter(List<Movie> items) {
-        mValues = items;
+    public MovieRecyclerViewAdapter(List<Movie> movies) {
+        this.movies = movies;
     }
 
     @Override
@@ -28,16 +28,16 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-//        holder.mIdView.setText(mValues.get(position).id);
-//        holder.mContentView.setText(mValues.get(position).content);
+        holder.mItem = movies.get(position);
+//        holder.mIdView.setText(movies.get(position).id);
+//        holder.mContentView.setText(movies.get(position).content);
 
         //holder.mView.setOnClickListener
     }
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return movies.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

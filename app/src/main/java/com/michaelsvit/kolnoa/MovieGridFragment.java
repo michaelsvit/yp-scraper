@@ -1,16 +1,24 @@
 package com.michaelsvit.kolnoa;
 
+import android.content.Context;
+import android.net.http.SslError;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
+import android.webkit.SslErrorHandler;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,6 +26,7 @@ import java.util.List;
  */
 public class MovieGridFragment extends Fragment {
 
+    private static final String LOG_TAG = MovieGridFragment.class.getSimpleName();
     private static final String ARG_CINEMA = "cinema";
 
     private int columnCount = 2;
@@ -47,6 +56,7 @@ public class MovieGridFragment extends Fragment {
             cinema = getArguments().getParcelable(ARG_CINEMA);
         }
 
+        movies = new ArrayList<>();
         // TODO: remove
         fetchMovies();
     }
@@ -57,12 +67,12 @@ public class MovieGridFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_movies_grid, container, false);
 
         // Set the adapter
-        /*if (view instanceof RecyclerView) {
+        if (view instanceof RecyclerView) {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
             recyclerView.setLayoutManager(new GridLayoutManager(context, columnCount));
             recyclerView.setAdapter(new MovieRecyclerViewAdapter(movies));
-        }*/
+        }
         return view;
     }
 
@@ -76,14 +86,20 @@ public class MovieGridFragment extends Fragment {
         class JSInterface{
             @JavascriptInterface
             public void processHTML(String html){
-                Log.d("TEST", html);
+                populateMovies(html);
             }
         }
         final WebView webView = new WebView(getActivity());
-        webView.getSettings().setJavaScriptEnabled(true);
+        WebSettings settings = webView.getSettings();
+        settings.setDomStorageEnabled(true);
         webView.addJavascriptInterface(new JSInterface(), "Android");
 
         webView.setWebViewClient(new WebViewClient(){
+            @Override
+            public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
+                handler.proceed();
+            }
+
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
@@ -93,8 +109,16 @@ public class MovieGridFragment extends Fragment {
                 }
             }
         });
+        webView.setWebChromeClient(new WebChromeClient());
+        settings.setJavaScriptEnabled(true);
+        //webView.clearCache(true);
+        //webView.clearHistory();
         webView.loadUrl(cinema.getUrl().toString());
 
+    }
+
+    private void populateMovies(String html) {
+        Log.d("TEST", html);
     }
 
     private class FetchMoviesTask extends AsyncTask<Cinema, Void, String>{
