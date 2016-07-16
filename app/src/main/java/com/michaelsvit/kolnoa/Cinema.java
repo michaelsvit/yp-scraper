@@ -3,7 +3,6 @@ package com.michaelsvit.kolnoa;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.net.URL;
 import java.util.List;
 
 /**
@@ -11,10 +10,10 @@ import java.util.List;
  */
 public class Cinema implements Parcelable{
     private String name;
-    private URL url;
+    private String url;
     private HTMLParser htmlParser;
 
-    public Cinema(String name, URL url, HTMLParser htmlParser) {
+    public Cinema(String name, String url, HTMLParser htmlParser) {
         this.name = name;
         this.url = url;
         this.htmlParser = htmlParser;
@@ -22,13 +21,13 @@ public class Cinema implements Parcelable{
 
     protected Cinema(Parcel in) {
         name = in.readString();
-        url = (URL) in.readSerializable();
+        url = in.readString();
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
-        dest.writeSerializable(url);
+        dest.writeString(url);
     }
 
     @Override
@@ -52,7 +51,7 @@ public class Cinema implements Parcelable{
         return name;
     }
 
-    public URL getUrl() {
+    public String getUrl() {
         return url;
     }
 

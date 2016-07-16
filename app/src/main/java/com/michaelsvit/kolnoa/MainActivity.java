@@ -11,8 +11,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,13 +45,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void createCinemaObjects() {
-        try {
-            URL YPurl = new URL("http://www.yesplanet.co.il/movies/");
-            Cinema yesPlanet = new Cinema("Yes Planet", YPurl, new YesPlanetHTMLParser());
-            cinemas.add(yesPlanet);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
+        final String YesPlanetURL = "http://www.yesplanet.co.il/movies/";
+        Cinema yesPlanet = new Cinema("Yes Planet", YesPlanetURL, new YesPlanetHTMLParser());
+        cinemas.add(yesPlanet);
     }
 
     @Override
