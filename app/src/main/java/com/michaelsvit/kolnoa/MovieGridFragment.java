@@ -66,7 +66,7 @@ public class MovieGridFragment extends Fragment {
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.fragment_movies_recycler_view);
         recyclerView.setLayoutManager(new GridLayoutManager(context, columnCount));
         movies = new ArrayList<>();
-        adapter = new MovieRecyclerViewAdapter(movies);
+        adapter = new MovieRecyclerViewAdapter(context, cinema, movies);
         recyclerView.setAdapter(adapter);
 
         fetchMovies(view);

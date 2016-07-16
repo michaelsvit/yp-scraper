@@ -1,18 +1,24 @@
 package com.michaelsvit.kolnoa;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.ImageView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecyclerViewAdapter.ViewHolder> {
-
+    private final Cinema cinema;
     private final List<Movie> movies;
+    private final Context context;
 
-    public MovieRecyclerViewAdapter(List<Movie> movies) {
+    public MovieRecyclerViewAdapter(Context context, Cinema cinema, List<Movie> movies) {
+        this.context = context;
+        this.cinema = cinema;
         this.movies = movies;
     }
 
@@ -26,8 +32,7 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         Movie movie = movies.get(position);
-        holder.movie = movie;
-        holder.view.setText(movie.getTitle());
+        Picasso.with(context).load(cinema.getPosterUrl(movie.getPosterURL())).into(holder.imageView);
     }
 
     @Override
@@ -36,12 +41,11 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final TextView view;
-        public Movie movie;
+        public final ImageView imageView;
 
         public ViewHolder(View view) {
             super(view);
-            this.view = (TextView) view;
+            this.imageView = (ImageView) view;
         }
     }
 }

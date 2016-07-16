@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void createCinemaObjects() {
-        final String YesPlanetURL = "http://www.yesplanet.co.il/movies/";
+        final String YesPlanetURL = "http://www.yesplanet.co.il/";
         Cinema yesPlanet = new Cinema("Yes Planet", YesPlanetURL, new YesPlanetHTMLParser());
         cinemas.add(yesPlanet);
     }
