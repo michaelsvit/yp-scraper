@@ -48,8 +48,8 @@ public class MainActivity extends AppCompatActivity
 
     private void createCinemaObjects() {
         try {
-            URL YPurl = new URL("https://www.yesplanet.co.il/movies");
-            Cinema yesPlanet = new Cinema("Yes Planet", YPurl);
+            URL YPurl = new URL("http://www.yesplanet.co.il/movies/");
+            Cinema yesPlanet = new Cinema("Yes Planet", YPurl, new YesPlanetHTMLParser());
             cinemas.add(yesPlanet);
         } catch (MalformedURLException e) {
             e.printStackTrace();

@@ -2,7 +2,9 @@ package com.michaelsvit.kolnoa;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
 import java.net.URL;
+import java.util.List;
 
 /**
  * Represents a single cinema
@@ -10,10 +12,12 @@ import java.net.URL;
 public class Cinema implements Parcelable{
     private String name;
     private URL url;
+    private HTMLParser htmlParser;
 
-    public Cinema(String name, URL url) {
+    public Cinema(String name, URL url, HTMLParser htmlParser) {
         this.name = name;
         this.url = url;
+        this.htmlParser = htmlParser;
     }
 
     protected Cinema(Parcel in) {
@@ -50,5 +54,9 @@ public class Cinema implements Parcelable{
 
     public URL getUrl() {
         return url;
+    }
+
+    public List<Movie> getMoviesFromHTML(String html) {
+        return htmlParser.parse(html);
     }
 }

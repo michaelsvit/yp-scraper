@@ -8,9 +8,6 @@ import android.widget.TextView;
 
 import java.util.List;
 
-/**
- * TODO: Replace the implementation with code for your data type.
- */
 public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecyclerViewAdapter.ViewHolder> {
 
     private final List<Movie> movies;
@@ -28,11 +25,9 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = movies.get(position);
-//        holder.mIdView.setText(movies.get(position).id);
-//        holder.mContentView.setText(movies.get(position).content);
-
-        //holder.mView.setOnClickListener
+        Movie movie = movies.get(position);
+        holder.movie = movie;
+        holder.view.setText(movie.getTitle());
     }
 
     @Override
@@ -41,21 +36,12 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public Movie mItem;
+        public final TextView view;
+        public Movie movie;
 
         public ViewHolder(View view) {
             super(view);
-            mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
-            mContentView = (TextView) view.findViewById(R.id.content);
-        }
-
-        @Override
-        public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            this.view = (TextView) view;
         }
     }
 }

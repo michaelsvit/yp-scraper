@@ -108,7 +108,7 @@ public class MovieGridFragment extends Fragment {
 
         @Override
         protected void onPostExecute(List<Movie> movies) {
-            movies.addAll(movies);
+            MovieGridFragment.this.movies.addAll(movies);
             adapter.notifyItemRangeInserted(0, movies.size());
         }
 
