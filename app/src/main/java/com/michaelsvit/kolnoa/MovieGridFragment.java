@@ -26,8 +26,8 @@ public class MovieGridFragment extends Fragment {
 
     private static final String LOG_TAG = MovieGridFragment.class.getSimpleName();
     private static final String ARG_CINEMA = "cinema";
+    private static final int columnCount = 2;
 
-    private int columnCount = 2;
     private Cinema cinema;
 
     ArrayList<Movie> movies;

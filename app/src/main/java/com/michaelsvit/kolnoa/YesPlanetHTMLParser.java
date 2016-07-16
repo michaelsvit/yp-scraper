@@ -37,9 +37,13 @@ public class YesPlanetHTMLParser implements HTMLParser{
     private Movie getMovie(Element htmlMovie) {
         final String IN_THEATRE = "cat_0";
         final String COMING_SOON = "cat_1";
+        final String TITLE_CLASS_NAME = "featureTitle";
+        final String RELEASE_DATE_CLASS_NAME = "releaseDate";
+        final String SYNOPSIS_CLASS_NAME = "synopsis";
+        final String POSTER_CLASS_NAME = "catPoster";
 
         // Title
-        Element featureTitle = htmlMovie.getElementsByClass("featureTitle").first();
+        Element featureTitle = htmlMovie.getElementsByClass(TITLE_CLASS_NAME).first();
         String titleElem;
         if (featureTitle != null) {
             titleElem = featureTitle.ownText();
@@ -48,19 +52,20 @@ public class YesPlanetHTMLParser implements HTMLParser{
         }
 
         // Release date
-        Element releaseDateElem = htmlMovie.getElementsByClass("releaseDate").first();
+        Element releaseDateElem = htmlMovie.getElementsByClass(RELEASE_DATE_CLASS_NAME).first();
         String releaseDate = null;
         if (releaseDateElem != null) {
             releaseDate = releaseDateElem.ownText();
         }
 
         // Synopsis
-        Element synopsisElem = htmlMovie.getElementsByClass("synopsis").first();
+        Element synopsisElem = htmlMovie.getElementsByClass(SYNOPSIS_CLASS_NAME).first();
         String synopsis = null;
         if (synopsisElem != null) {
             synopsis = synopsisElem.ownText();
         }
 
+        // Status
         Set<String> classNames = htmlMovie.classNames();
         Movie.MovieStatus status;
         if(classNames.contains(IN_THEATRE)){
@@ -71,6 +76,14 @@ public class YesPlanetHTMLParser implements HTMLParser{
             return null;
         }
 
-        return new Movie(titleElem, releaseDate, synopsis, status);
+        // Poster
+        Element posterURLElem = htmlMovie.getElementsByClass(POSTER_CLASS_NAME).first();
+        String posterURL = null;
+        if (posterURLElem != null) {
+            final String attributeKey = "data-src";
+            posterURL = posterURLElem.attr(attributeKey);
+        }
+
+        return new Movie(titleElem, releaseDate, synopsis, status, posterURL);
     }
 }

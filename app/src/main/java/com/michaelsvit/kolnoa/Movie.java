@@ -11,12 +11,14 @@ public class Movie {
     private String releaseDate;
     private String synopsis;
     private MovieStatus status;
+    private String posterURL;
 
-    public Movie(String name, String releaseDate, String synopsis, MovieStatus status) {
+    public Movie(String name, String releaseDate, String synopsis, MovieStatus status, String posterURL) {
         this.title = name;
         this.releaseDate = releaseDate;
         this.synopsis = synopsis;
         this.status = status;
+        this.posterURL = posterURL;
     }
 
     public String getTitle() {
@@ -33,5 +35,9 @@ public class Movie {
 
     public MovieStatus getStatus() {
         return status;
+    }
+
+    public String getPosterURL() {
+        return posterURL;
     }
 }
