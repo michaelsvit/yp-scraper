@@ -68,6 +68,7 @@ public class MovieGridFragment extends Fragment {
         movies = new ArrayList<>();
         adapter = new MovieRecyclerViewAdapter(context, cinema, movies);
         recyclerView.setAdapter(adapter);
+        recyclerView.setHasFixedSize(true);
 
         fetchMovies(view);
 
@@ -100,7 +101,7 @@ public class MovieGridFragment extends Fragment {
         });
 
         settings.setJavaScriptEnabled(true);
-        webView.loadUrl(cinema.getUrl().toString());
+        webView.loadUrl(cinema.getUrl());
     }
 
     private class ParseHTMLResponse extends AsyncTask<String, Void, List<Movie>> {
@@ -109,7 +110,7 @@ public class MovieGridFragment extends Fragment {
         @Override
         protected void onPostExecute(List<Movie> movies) {
             MovieGridFragment.this.movies.addAll(movies);
-            adapter.notifyItemRangeInserted(0, movies.size());
+            adapter.notifyDataSetChanged();
         }
 
         @Override

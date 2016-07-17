@@ -57,8 +57,8 @@ public class Cinema implements Parcelable{
         return url + moviesPath;
     }
 
-    public String getPosterUrl(String posterRelativeUrl) {
-        return url + posterRelativeUrl;
+    public String getPosterUrl(Movie movie) {
+        return url + movie.getPosterURL();
     }
 
     public List<Movie> getMoviesFromHTML(String html) {

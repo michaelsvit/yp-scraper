@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:name="com.michaelsvit.kolnoa.MovieGridFragment"
     tools:context="com.michaelsvit.kolnoa.MovieGridFragment"
@@ -12,7 +11,6 @@
         android:id="@+id/fragment_movies_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layoutManager="LinearLayoutManager"
         tools:listitem="@layout/fragment_movies" />
 
     <WebView xmlns:android="http://schemas.android.com/apk/res/android"
