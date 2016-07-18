@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.michaelsvit.kolnoa.FixedAspectRatioImageView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/fragment_movies_poster"
     android:layout_width="match_parent"
     android:layout_height="288dp">
 
-</ImageView>
+</com.michaelsvit.kolnoa.FixedAspectRatioImageView>
