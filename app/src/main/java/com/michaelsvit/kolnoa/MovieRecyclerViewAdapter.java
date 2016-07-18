@@ -1,6 +1,7 @@
 package com.michaelsvit.kolnoa;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -42,7 +43,7 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_movies, parent, false);
-        return new ViewHolder(view);
+        return  new ViewHolder(view);
     }
 
     @Override
@@ -66,7 +67,17 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
 
         public ViewHolder(View view) {
             super(view);
-            this.imageView = (ImageView) view.findViewById(R.id.fragment_movies_poster);
+            this.imageView = (ImageView) view;
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int position = getAdapterPosition();
+                    Movie movie = movies.get(position);
+                    Intent intent = new Intent(context, MovieDetailsActivity.class);
+                    intent.putExtra(Movie.ARG_NAME, movie);
+                    context.startActivity(intent);
+                }
+            });
         }
     }
 }
