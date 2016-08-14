@@ -12,24 +12,28 @@ public class Cinema implements Parcelable{
     public static final String ARG_NAME = "cinema";
 
     private String name;
-    private String url;
+    private String moviesUrl;
+    private String scheduleUrl;
     private HTMLParser htmlParser;
 
-    public Cinema(String name, String url, HTMLParser htmlParser) {
+    public Cinema(String name, String moviesUrl, String scheduleUrl, HTMLParser htmlParser) {
         this.name = name;
-        this.url = url;
+        this.moviesUrl = moviesUrl;
+        this.scheduleUrl = scheduleUrl;
         this.htmlParser = htmlParser;
     }
 
     protected Cinema(Parcel in) {
         name = in.readString();
-        url = in.readString();
+        moviesUrl = in.readString();
+        scheduleUrl = in.readString();
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
-        dest.writeString(url);
+        dest.writeString(moviesUrl);
+        dest.writeString(scheduleUrl);
     }
 
     @Override
@@ -54,16 +58,18 @@ public class Cinema implements Parcelable{
     }
 
     // Movies source
-    public String getUrl() {
+    public String getMoviesUrl() {
         final String moviesPath = "movies";
-        return url + moviesPath;
+        return moviesUrl + moviesPath;
     }
 
     public String getPosterUrl(Movie movie) {
-        return url + movie.getPosterURL();
+        return moviesUrl + movie.getPosterURL();
     }
 
     public List<Movie> getMoviesFromHTML(String html) {
-        return htmlParser.parse(html);
+        final List<Movie> movies = htmlParser.parse(html);
+
+        return movies;
     }
 }

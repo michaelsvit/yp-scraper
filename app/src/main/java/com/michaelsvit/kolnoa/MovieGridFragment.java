@@ -3,6 +3,7 @@ package com.michaelsvit.kolnoa;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,8 +31,11 @@ public class MovieGridFragment extends Fragment {
 
     private Cinema cinema;
 
-    ArrayList<Movie> movies;
-    MovieRecyclerViewAdapter adapter;
+    private ArrayList<Movie> movies;
+    private MovieRecyclerViewAdapter adapter;
+
+    private String moviesHTMLRespone;
+    private WebView webView;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -70,21 +74,36 @@ public class MovieGridFragment extends Fragment {
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
 
-        fetchMovies(view);
+        initWebView(view);
+        fetchData();
 
         return view;
     }
 
-    private void fetchMovies(View view) {
+    private void fetchData() {
+        webView.loadUrl(cinema.getMoviesUrl());
+    }
+
+    @NonNull
+    private void initWebView(View view) {
         class JSInterface{
             @JavascriptInterface
-            public void processHTML(String html){
-                if(html.length() > 10000){
-                    new ParseHTMLResponse().execute(html);
+            public void saveMoviesHTML(String moviesHTML){
+                if(moviesHTML.length() > 10000){
+                    moviesHTMLRespone = moviesHTML;
+                    // TODO: Fix
+                    //webView.loadUrl(cinema.getScheduleUrl());
+                }
+            }
+
+            @JavascriptInterface
+            public void processHTML(String scheduleJSON){
+                if(scheduleJSON.length() > 10000){
+                    new ParseHTMLResponse().execute(moviesHTMLRespone, scheduleJSON);
                 }
             }
         }
-        final WebView webView = (WebView) view.findViewById(R.id.fragment_movies_web_view);
+        webView = (WebView) view.findViewById(R.id.fragment_movies_web_view);
         WebSettings settings = webView.getSettings();
         settings.setDomStorageEnabled(true);
         webView.addJavascriptInterface(new JSInterface(), "Android");
@@ -94,14 +113,13 @@ public class MovieGridFragment extends Fragment {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 if(webView.getProgress() == 100){
-                    webView.loadUrl("javascript:window.Android.processHTML("
+                    webView.loadUrl("javascript:window.Android.saveMoviesHTML("
                             + "'<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');");
                 }
             }
         });
 
         settings.setJavaScriptEnabled(true);
-        webView.loadUrl(cinema.getUrl());
     }
 
     private class ParseHTMLResponse extends AsyncTask<String, Void, List<Movie>> {
