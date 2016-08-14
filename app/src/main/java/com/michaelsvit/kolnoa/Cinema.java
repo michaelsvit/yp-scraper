@@ -9,6 +9,8 @@ import java.util.List;
  * Represents a single cinema
  */
 public class Cinema implements Parcelable{
+    public static final String ARG_NAME = "cinema";
+
     private String name;
     private String url;
     private HTMLParser htmlParser;

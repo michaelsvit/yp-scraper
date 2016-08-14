@@ -1,5 +1,6 @@
 package com.michaelsvit.kolnoa;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -8,16 +9,22 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 public class MovieDetailsActivity extends AppCompatActivity {
     private Movie movie;
+    private Cinema cinema;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        movie = getIntent().getParcelableExtra(Movie.ARG_NAME);
+        final Intent intent = getIntent();
+        movie = intent.getParcelableExtra(Movie.ARG_NAME);
+        cinema = intent.getParcelableExtra(Cinema.ARG_NAME);
 
         setContentView(R.layout.activity_movie_details);
         CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
@@ -38,7 +45,19 @@ public class MovieDetailsActivity extends AppCompatActivity {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        TextView textView = (TextView) findViewById(R.id.details_synopsis);
-        textView.setText(movie.getSynopsis());
+        populateDetails();
+    }
+
+    private void populateDetails() {
+        TextView synopsisTextView = (TextView) findViewById(R.id.details_synopsis);
+        synopsisTextView.setText(movie.getSynopsis());
+
+        TextView releaseDateTextView = (TextView) findViewById(R.id.details_release_date);
+        releaseDateTextView.setText(movie.getReleaseDate());
+
+        ImageView posterImageView = (ImageView) findViewById(R.id.details_poster);
+        Picasso.with(this)
+                .load(cinema.getPosterUrl(movie))
+                .into(posterImageView);
     }
 }

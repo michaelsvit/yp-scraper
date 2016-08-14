@@ -19,6 +19,7 @@
             android:orientation="horizontal">
 
             <com.michaelsvit.kolnoa.FixedAspectRatioImageView
+                android:id="@+id/details_poster"
                 android:layout_width="0dp"
                 android:layout_height="100dp"
                 android:layout_weight="1"/>
@@ -37,7 +38,7 @@
                     android:textSize="17sp"
                     android:text="@string/release_date"/>
 
-                <TextView
+                <TextView android:id="@+id/details_release_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
@@ -53,7 +54,7 @@
                     android:textSize="17sp"
                     android:text="@string/imdb_rating_title"/>
 
-                <TextView
+                <TextView android:id="@+id/details_rating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"

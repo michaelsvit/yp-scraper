@@ -1,7 +1,5 @@
 package com.michaelsvit.kolnoa;
 
-import android.util.Log;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -24,12 +22,9 @@ public class YesPlanetHTMLParser implements HTMLParser{
         Document doc = Jsoup.parse(html);
 
         Element content = null;
-        int count = 0;
         while (content == null) {
-            count++;
             content = doc.getElementsByClass("catData").first();
         }
-        Log.d(LOG_TAG,String.valueOf(count));
         Elements htmlMovies = content.getElementsByTag("li");
 
         for(Element htmlMovie : htmlMovies){
