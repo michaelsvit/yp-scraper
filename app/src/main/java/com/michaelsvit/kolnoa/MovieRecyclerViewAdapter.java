@@ -13,19 +13,15 @@ import android.widget.ImageView;
 import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
-import java.util.List;
-
 public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecyclerViewAdapter.ViewHolder> {
     private final Cinema cinema;
-    private final List<Movie> movies;
     private final Context context;
     private final DisplayMetrics displayMetrics;
     private final Picasso picasso;
 
-    public MovieRecyclerViewAdapter(Context context, Cinema cinema, List<Movie> movies) {
+    public MovieRecyclerViewAdapter(Context context, Cinema cinema) {
         this.context = context;
         this.cinema = cinema;
-        this.movies = movies;
 
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         displayMetrics = new DisplayMetrics();
@@ -48,7 +44,7 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        Movie movie = movies.get(position);
+        Movie movie = cinema.getMovie(position);
         int imgViewWidth = displayMetrics.widthPixels / 2;
         int imgViewHeight = (int)(imgViewWidth * 1.4);
         picasso.with(context)
@@ -59,7 +55,7 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
 
     @Override
     public int getItemCount() {
-        return movies.size();
+        return cinema.getMoviesCount();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -72,10 +68,10 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
                 @Override
                 public void onClick(View view) {
                     int position = getAdapterPosition();
-                    Movie movie = movies.get(position);
+                    Movie movie = cinema.getMovie(position);
                     Intent intent = new Intent(context, MovieDetailsActivity.class);
                     intent.putExtra(Movie.ARG_NAME, movie);
-                    intent.putExtra(Cinema.ARG_NAME, cinema);
+                    // TODO: put movie schedule as extra
                     context.startActivity(intent);
                 }
             });

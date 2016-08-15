@@ -17,9 +17,6 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * A fragment representing a list of Items.
  */
@@ -30,8 +27,6 @@ public class MovieGridFragment extends Fragment {
     private static final int columnCount = 2;
 
     private Cinema cinema;
-
-    private ArrayList<Movie> movies;
     private MovieRecyclerViewAdapter adapter;
 
     private String moviesHTMLRespone;
@@ -44,10 +39,10 @@ public class MovieGridFragment extends Fragment {
     public MovieGridFragment() {
     }
 
-    public static MovieGridFragment newInstance(Cinema cinema) {
+    public static MovieGridFragment newInstance(Cinema.CinemaName cinema) {
         MovieGridFragment fragment = new MovieGridFragment();
         Bundle args = new Bundle();
-        args.putParcelable(ARG_CINEMA, cinema);
+        args.putSerializable(ARG_CINEMA, cinema);
         fragment.setArguments(args);
         return fragment;
     }
@@ -57,7 +52,12 @@ public class MovieGridFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            cinema = getArguments().getParcelable(ARG_CINEMA);
+            Cinema.CinemaName cinemaName = (Cinema.CinemaName) getArguments().getSerializable(ARG_CINEMA);
+            switch(cinemaName){
+                case YESPLANET:
+                    cinema = new YesPlanet();
+                    break;
+            }
         }
     }
 
@@ -69,8 +69,7 @@ public class MovieGridFragment extends Fragment {
         Context context = view.getContext();
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.fragment_movies_recycler_view);
         recyclerView.setLayoutManager(new GridLayoutManager(context, columnCount));
-        movies = new ArrayList<>();
-        adapter = new MovieRecyclerViewAdapter(context, cinema, movies);
+        adapter = new MovieRecyclerViewAdapter(context, cinema);
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
 
@@ -91,15 +90,14 @@ public class MovieGridFragment extends Fragment {
             public void saveMoviesHTML(String moviesHTML){
                 if(moviesHTML.length() > 10000){
                     moviesHTMLRespone = moviesHTML;
-                    // TODO: Fix
-                    //webView.loadUrl(cinema.getScheduleUrl());
+                    webView.loadUrl(cinema.getScheduleUrl());
                 }
             }
 
             @JavascriptInterface
             public void processHTML(String scheduleJSON){
                 if(scheduleJSON.length() > 10000){
-                    new ParseHTMLResponse().execute(moviesHTMLRespone, scheduleJSON);
+                    new ParseResponse().execute(moviesHTMLRespone, scheduleJSON);
                 }
             }
         }
@@ -122,21 +120,22 @@ public class MovieGridFragment extends Fragment {
         settings.setJavaScriptEnabled(true);
     }
 
-    private class ParseHTMLResponse extends AsyncTask<String, Void, List<Movie>> {
-        private final String LOG_TAG = ParseHTMLResponse.class.getSimpleName();
+    private class ParseResponse extends AsyncTask<String, Void, Void> {
+        private final String LOG_TAG = ParseResponse.class.getSimpleName();
 
         @Override
-        protected void onPostExecute(List<Movie> movies) {
-            MovieGridFragment.this.movies.addAll(movies);
+        protected void onPostExecute(Void blank) {
             adapter.notifyDataSetChanged();
         }
 
         @Override
-        protected List<Movie> doInBackground(String... params) {
-            if(params.length > 0) {
-                return cinema.getMoviesFromHTML(params[0]);
+        protected Void doInBackground(String... params) {
+            if(params.length > 1) {
+                cinema.updateMovies(params[0]);
+                cinema.updateSchedule(params[1]);
+                return null;
             } else {
-                Log.e(LOG_TAG, "Error parsing HTML.");
+                Log.e(LOG_TAG, "Error parsing response.");
                 return null;
             }
         }
