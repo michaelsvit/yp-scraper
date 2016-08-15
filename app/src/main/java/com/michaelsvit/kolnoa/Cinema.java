@@ -1,75 +1,66 @@
 package com.michaelsvit.kolnoa;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Represents a single cinema
  */
-public class Cinema implements Parcelable{
-    public static final String ARG_NAME = "cinema";
+public abstract class Cinema{
+    public enum CinemaName{
+        YESPLANET
+    }
 
     private String name;
+    private String url;
     private String moviesUrl;
     private String scheduleUrl;
-    private HTMLParser htmlParser;
+    private CinemaDataParser cinemaDataParser;
 
-    public Cinema(String name, String moviesUrl, String scheduleUrl, HTMLParser htmlParser) {
+    private List<Movie> movies;
+    private Map<String, List<MovieScreening>> schedule;
+
+    public Cinema(String name, String url, String moviesUrl, String scheduleUrl, CinemaDataParser cinemaDataParser) {
         this.name = name;
+        this.url = url;
         this.moviesUrl = moviesUrl;
         this.scheduleUrl = scheduleUrl;
-        this.htmlParser = htmlParser;
+        this.cinemaDataParser = cinemaDataParser;
+        movies = new ArrayList<>();
     }
-
-    protected Cinema(Parcel in) {
-        name = in.readString();
-        moviesUrl = in.readString();
-        scheduleUrl = in.readString();
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(name);
-        dest.writeString(moviesUrl);
-        dest.writeString(scheduleUrl);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    public static final Creator<Cinema> CREATOR = new Creator<Cinema>() {
-        @Override
-        public Cinema createFromParcel(Parcel in) {
-            return new Cinema(in);
-        }
-
-        @Override
-        public Cinema[] newArray(int size) {
-            return new Cinema[size];
-        }
-    };
 
     public String getName() {
         return name;
     }
 
-    // Movies source
+    public String getUrl() {
+        return url;
+    }
+
     public String getMoviesUrl() {
-        final String moviesPath = "movies";
-        return moviesUrl + moviesPath;
+        return moviesUrl;
     }
 
-    public String getPosterUrl(Movie movie) {
-        return moviesUrl + movie.getPosterURL();
+    public String getScheduleUrl() {
+        return scheduleUrl;
     }
 
-    public List<Movie> getMoviesFromHTML(String html) {
-        final List<Movie> movies = htmlParser.parse(html);
-
-        return movies;
+    public Movie getMovie(int position){
+        return movies.get(position);
     }
+
+    public int getMoviesCount(){
+        return movies.size();
+    }
+
+    public void updateMovies(String html){
+        movies.addAll(cinemaDataParser.parseMoviesHTML(html));
+    }
+
+    public void updateSchedule(String json){
+        schedule = cinemaDataParser.parseScheduleJSON(json);
+    }
+
+    public abstract String getPosterUrl(Movie movie);
 }
