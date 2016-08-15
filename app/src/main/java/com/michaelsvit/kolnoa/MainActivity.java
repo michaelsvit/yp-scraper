@@ -11,12 +11,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    List<Cinema> cinemas;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,22 +30,11 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        cinemas = new ArrayList<>();
-        createCinemaObjects();
-
         // TODO: move this to drawer logic
         FragmentManager manager = getSupportFragmentManager();
         manager.beginTransaction()
-                .add(R.id.main_container ,MovieGridFragment.newInstance(cinemas.get(0)))
+                .add(R.id.main_container ,MovieGridFragment.newInstance(Cinema.CinemaName.YESPLANET))
                 .commit();
-    }
-
-    private void createCinemaObjects() {
-        final String yesPlanetURL = "http://www.yesplanet.co.il/";
-        final String yesPlanetMoviesDataURL = "http://www.yesplanet.co.il/loadFunction?layoutId=10&layerId=1&exportCode=movies_filter";
-        final String yesPlanetScheduleDataURL = "http://www.yesplanet.co.il/presentationsJSON";
-        Cinema yesPlanet = new Cinema("Yes Planet", yesPlanetURL, yesPlanetMoviesDataURL, new YesPlanetHTMLParser());
-        cinemas.add(yesPlanet);
     }
 
     @Override
