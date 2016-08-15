@@ -13,13 +13,15 @@ public class Movie implements Parcelable {
     public enum MovieStatus{
         IN_THEATRE, COMING_SOON
     }
+    private String id;
     private String title;
     private String releaseDate;
     private String synopsis;
     private MovieStatus status;
     private String posterURL;
 
-    public Movie(String name, String releaseDate, String synopsis, MovieStatus status, String posterURL) {
+    public Movie(String id, String name, String releaseDate, String synopsis, MovieStatus status, String posterURL) {
+        this.id = id;
         this.title = name;
         this.releaseDate = releaseDate;
         this.synopsis = synopsis;
@@ -28,6 +30,7 @@ public class Movie implements Parcelable {
     }
 
     protected Movie(Parcel in) {
+        id = in.readString();
         title = in.readString();
         releaseDate = in.readString();
         synopsis = in.readString();
@@ -37,6 +40,7 @@ public class Movie implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
         dest.writeString(title);
         dest.writeString(releaseDate);
         dest.writeString(synopsis);
@@ -60,6 +64,10 @@ public class Movie implements Parcelable {
             return new Movie[size];
         }
     };
+
+    public String getId() {
+        return id;
+    }
 
     public String getTitle() {
         return title;
