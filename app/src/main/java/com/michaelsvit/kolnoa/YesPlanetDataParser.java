@@ -45,6 +45,10 @@ public class YesPlanetDataParser implements CinemaDataParser {
     }
 
     private Movie getMovie(Element htmlMovie) {
+        if(!isMovie(htmlMovie)){
+            return null;
+        }
+
         // Base URL for posters
         final String YES_PLANET_BASE_URL = "http://www.yesplanet.co.il/";
 
@@ -104,6 +108,14 @@ public class YesPlanetDataParser implements CinemaDataParser {
         }
 
         return new Movie(featureId, featureTitle, releaseDate, synopsis, status, posterURL);
+    }
+
+    private boolean isMovie(Element htmlMovie) {
+        final String MOVIE_CLASS = "featureItem";
+        if(htmlMovie.className().contains(MOVIE_CLASS)){
+            return true;
+        }
+        return false;
     }
 
     @Override
