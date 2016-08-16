@@ -90,14 +90,19 @@ public class MovieGridFragment extends Fragment {
             public void saveMoviesHTML(String moviesHTML){
                 if(moviesHTML.length() > 10000){
                     moviesHTMLRespone = moviesHTML;
-                    webView.loadUrl(cinema.getScheduleUrl());
+                    webView.post(new Runnable(){
+                        @Override
+                        public void run() {
+                            webView.loadUrl(cinema.getScheduleUrl());
+                        }
+                    });
                 }
             }
 
             @JavascriptInterface
-            public void processHTML(String scheduleJSON){
-                if(scheduleJSON.length() > 10000){
-                    new ParseResponse().execute(moviesHTMLRespone, scheduleJSON);
+            public void processHTML(String scheduleJSONResponse){
+                if(scheduleJSONResponse.length() > 10000){
+                    new ParseResponse().execute(moviesHTMLRespone, scheduleJSONResponse);
                 }
             }
         }
@@ -107,12 +112,19 @@ public class MovieGridFragment extends Fragment {
         webView.addJavascriptInterface(new JSInterface(), "Android");
         webView.setWebChromeClient(new WebChromeClient());
         webView.setWebViewClient(new WebViewClient(){
+            boolean moviesHTML = true;
+
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 if(webView.getProgress() == 100){
-                    webView.loadUrl("javascript:window.Android.saveMoviesHTML("
-                            + "'<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');");
+                    if (moviesHTML) {
+                        webView.loadUrl("javascript:window.Android.saveMoviesHTML("
+                                + "'<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');");
+                        moviesHTML = false;
+                    } else {
+                        webView.loadUrl("javascript:window.Android.processHTML(document.getElementsByTagName('html')[0].textContent);");
+                    }
                 }
             }
         });
