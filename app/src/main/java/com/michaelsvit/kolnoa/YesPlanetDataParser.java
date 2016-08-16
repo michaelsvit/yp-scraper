@@ -1,5 +1,10 @@
 package com.michaelsvit.kolnoa;
 
+import android.util.Log;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -104,6 +109,8 @@ public class YesPlanetDataParser implements CinemaDataParser {
     @Override
     public Map<String, List<MovieScreening>> parseScheduleJSON(String json) {
         final String SITES_ARRAY = "sites";
+        final String LANGUAGES_ARRAY = "languages";
+        final String SCREENING_TYPE_ARRAY = "venueTypes";
         final String SITE_NAME_FIELD = "sn";
         final String SITE_TICKETS_URL_FIELD = "tu";
         final String SITE_FEATURES_ARRAY = "fe";
@@ -116,9 +123,51 @@ public class YesPlanetDataParser implements CinemaDataParser {
         final String SCREENING_ID_FIELD = "pc";
         final String SCREENING_TYPE_FIELD = "vt";
 
+        final int YES_PLANET_RASHLATZ_INDEX = 2;
+        final int YES_PLANET_RASHLATZ_ID = 1010003;
+
         Map<String, List<MovieScreening>> schedule = new HashMap<>();
+        try {
+            JSONObject root = new JSONObject(json);
+            JSONArray languages = root.getJSONArray(LANGUAGES_ARRAY);
+            JSONArray screeningTypes = root.getJSONArray(SCREENING_TYPE_ARRAY);
+            JSONArray sites = root.getJSONArray(SITES_ARRAY);
 
+            // Extract schedule only from YesPlanet Rishon Lezion
+            JSONObject site = sites.getJSONObject(YES_PLANET_RASHLATZ_INDEX);
+            if(site.getInt(SITE_ID) == YES_PLANET_RASHLATZ_ID){
+                JSONArray movies = site.getJSONArray(SITE_FEATURES_ARRAY);
+                for(int i = 0; i < movies.length(); i++){
+                    JSONObject movie = movies.getJSONObject(i);
 
-        return null;
+                    // Movie details
+                    String movieId = movie.getString(FEATURE_ID_FIELD);
+                    int movieLanguage = movie.getInt(FEATURE_LANGUAGE_FIELD);
+
+                    JSONArray screenings = movie.getJSONArray(FEATURE_SCREENINGS_ARRAY);
+                    List<MovieScreening> movieScreenings = new ArrayList<>(screenings.length());
+                    for(int j = 0; j < screenings.length(); j++){
+                        JSONObject screening = screenings.getJSONObject(j);
+
+                        // Screening details
+                        String date = screening.getString(SCREENING_DATE_FIELD);
+                        String time = screening.getString(SCREENING_TIME_FIELD);
+                        String id = screening.getString(SCREENING_ID_FIELD);
+                        int typeIndex = screening.getInt(SCREENING_TYPE_FIELD);
+
+                        movieScreenings.add(new MovieScreening(date, time, id, screeningTypes.getString(typeIndex)));
+                    }
+
+                    schedule.put(movieId, movieScreenings);
+                }
+            } else {
+                Log.d(LOG_TAG, "Cinema is not YesPlanet Rashlatz");
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e(LOG_TAG, "Error parsing JSON");
+        }
+
+        return schedule;
     }
 }

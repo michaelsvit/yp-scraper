@@ -9,12 +9,21 @@ import android.os.Parcelable;
 public class MovieScreening implements Parcelable {
     private String date;
     private String time;
-    private String screeningId;
+    private String id;
+    private String type;
+
+    public MovieScreening(String date, String time, String id, String type) {
+        this.date = date;
+        this.time = time;
+        this.id = id;
+        this.type = type;
+    }
 
     protected MovieScreening(Parcel in) {
         date = in.readString();
         time = in.readString();
-        screeningId = in.readString();
+        id = in.readString();
+        type = in.readString();
     }
 
     public static final Creator<MovieScreening> CREATOR = new Creator<MovieScreening>() {
@@ -38,6 +47,7 @@ public class MovieScreening implements Parcelable {
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(date);
         parcel.writeString(time);
-        parcel.writeString(screeningId);
+        parcel.writeString(id);
+        parcel.writeString(type);
     }
 }
