@@ -11,9 +11,4 @@ public class YesPlanet extends Cinema {
                 "http://www.yesplanet.co.il/presentationsJSON",
                 new YesPlanetDataParser());
     }
-
-    @Override
-    public String getPosterUrl(Movie movie) {
-        return null;
-    }
 }

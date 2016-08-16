@@ -40,6 +40,9 @@ public class YesPlanetDataParser implements CinemaDataParser {
     }
 
     private Movie getMovie(Element htmlMovie) {
+        // Base URL for posters
+        final String YES_PLANET_BASE_URL = "http://www.yesplanet.co.il/";
+
         final String IN_THEATRE = "cat_0";
         final String COMING_SOON = "cat_1";
         final String DATA_CLASS_NAME = "extended";
@@ -92,7 +95,7 @@ public class YesPlanetDataParser implements CinemaDataParser {
         String posterURL = null;
         if (posterURLElem != null) {
             final String attributeKey = "data-src";
-            posterURL = posterURLElem.attr(attributeKey);
+            posterURL = YES_PLANET_BASE_URL + posterURLElem.attr(attributeKey);
         }
 
         return new Movie(featureId, featureTitle, releaseDate, synopsis, status, posterURL);
