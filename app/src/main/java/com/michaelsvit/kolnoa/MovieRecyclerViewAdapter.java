@@ -13,6 +13,8 @@ import android.widget.ImageView;
 import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+
 public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecyclerViewAdapter.ViewHolder> {
     private final Cinema cinema;
     private final Context context;
@@ -48,7 +50,7 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
         int imgViewWidth = displayMetrics.widthPixels / 2;
         int imgViewHeight = (int)(imgViewWidth * 1.4);
         picasso.with(context)
-                .load(cinema.getPosterUrl(movie))
+                .load(movie.getPosterURL())
                 .resize(imgViewWidth, imgViewHeight)
                 .into(holder.imageView);
     }
@@ -71,7 +73,8 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
                     Movie movie = cinema.getMovie(position);
                     Intent intent = new Intent(context, MovieDetailsActivity.class);
                     intent.putExtra(Movie.ARG_NAME, movie);
-                    // TODO: put movie schedule as extra
+                    intent.putParcelableArrayListExtra(Cinema.SCHEDULE_ARG_NAME,
+                            (ArrayList<MovieScreening>) cinema.getMovieSchedule(movie.getId()));
                     context.startActivity(intent);
                 }
             });

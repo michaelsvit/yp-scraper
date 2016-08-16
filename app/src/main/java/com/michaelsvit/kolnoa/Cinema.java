@@ -8,6 +8,8 @@ import java.util.Map;
  * Represents a single cinema
  */
 public abstract class Cinema{
+    public static final String SCHEDULE_ARG_NAME = "schedule";
+
     public enum CinemaName{
         YESPLANET
     }
@@ -50,6 +52,10 @@ public abstract class Cinema{
         return movies.get(position);
     }
 
+    public List<MovieScreening> getMovieSchedule(String movieId){
+        return schedule.get(movieId);
+    }
+
     public int getMoviesCount(){
         return movies.size();
     }
@@ -61,6 +67,4 @@ public abstract class Cinema{
     public void updateSchedule(String json){
         schedule = cinemaDataParser.parseScheduleJSON(json);
     }
-
-    public abstract String getPosterUrl(Movie movie);
 }

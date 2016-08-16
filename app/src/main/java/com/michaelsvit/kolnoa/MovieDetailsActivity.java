@@ -14,9 +14,11 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
+
 public class MovieDetailsActivity extends AppCompatActivity {
     private Movie movie;
-    private Cinema cinema;
+    private List<MovieScreening> schedule;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +26,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         final Intent intent = getIntent();
         movie = intent.getParcelableExtra(Movie.ARG_NAME);
-        cinema = intent.getParcelableExtra(Cinema.ARG_NAME);
+        schedule = intent.getParcelableArrayListExtra(Cinema.SCHEDULE_ARG_NAME);
 
         setContentView(R.layout.activity_movie_details);
         CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
@@ -57,7 +59,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         ImageView posterImageView = (ImageView) findViewById(R.id.details_poster);
         Picasso.with(this)
-                .load(cinema.getPosterUrl(movie))
+                .load(movie.getPosterURL())
                 .into(posterImageView);
     }
 }
