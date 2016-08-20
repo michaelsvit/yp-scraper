@@ -12,8 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -107,29 +105,20 @@ public class MovieGridFragment extends Fragment {
             }
         }
         webView = (WebView) view.findViewById(R.id.fragment_movies_web_view);
-        WebSettings settings = webView.getSettings();
-        settings.setDomStorageEnabled(true);
+        webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(new JSInterface(), "Android");
-        webView.setWebChromeClient(new WebChromeClient());
         webView.setWebViewClient(new WebViewClient(){
-            boolean moviesHTML = true;
-
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                if(webView.getProgress() == 100){
-                    if (moviesHTML) {
-                        webView.loadUrl("javascript:window.Android.saveMoviesHTML("
-                                + "'<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');");
-                        moviesHTML = false;
-                    } else {
-                        webView.loadUrl("javascript:window.Android.processHTML(document.getElementsByTagName('html')[0].textContent);");
-                    }
+                if (moviesHTMLRespone == null) {
+                    webView.loadUrl("javascript:window.Android.saveMoviesHTML("
+                            + "'<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');");
+                } else {
+                    webView.loadUrl("javascript:window.Android.processHTML(document.getElementsByTagName('html')[0].textContent);");
                 }
             }
         });
-
-        settings.setJavaScriptEnabled(true);
     }
 
     private class ParseResponse extends AsyncTask<String, Void, Void> {
