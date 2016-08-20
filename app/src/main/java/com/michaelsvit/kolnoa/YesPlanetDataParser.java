@@ -55,7 +55,7 @@ public class YesPlanetDataParser implements CinemaDataParser {
         final String IN_THEATRE = "cat_0";
         final String COMING_SOON = "cat_1";
         final String DATA_CLASS_NAME = "extended";
-        final String ID_ATTR_NAME = "data-feature_code";
+        final String ID_ATTR_NAME = "data-distribcode";
         final String TITLE_CLASS_NAME = "featureTitle";
         final String RELEASE_DATE_CLASS_NAME = "releaseDate";
         final String SYNOPSIS_CLASS_NAME = "synopsis";
@@ -112,10 +112,7 @@ public class YesPlanetDataParser implements CinemaDataParser {
 
     private boolean isMovie(Element htmlMovie) {
         final String MOVIE_CLASS = "featureItem";
-        if(htmlMovie.className().contains(MOVIE_CLASS)){
-            return true;
-        }
-        return false;
+        return htmlMovie.className().contains(MOVIE_CLASS);
     }
 
     @Override
