@@ -27,4 +27,9 @@
     "seams, divides space, and indicates moving parts.\n\n"</string>
     <string name="release_date">תאריך בכורה</string>
     <string name="dummy_release_date">17/3/16</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="screening_hours">שעות הקרנה</string>
+    <string name="title_activity_movie_screenings">MovieScreeningsActivity</string>
 </resources>
