@@ -50,4 +50,20 @@ public class MovieScreening implements Parcelable {
         parcel.writeString(id);
         parcel.writeString(type);
     }
+
+    public String getDate() {
+        return date;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getType() {
+        return type;
+    }
 }
