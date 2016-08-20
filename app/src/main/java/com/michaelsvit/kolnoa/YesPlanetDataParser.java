@@ -120,7 +120,7 @@ public class YesPlanetDataParser implements CinemaDataParser {
     }
 
     private String extractVideoCode(String attr) {
-        return attr.substring(attr.indexOf("'"), attr.lastIndexOf("'"));
+        return attr.substring(attr.indexOf("'")+1, attr.lastIndexOf("'"));
     }
 
     private String buildPosterURL(String relativePath) {

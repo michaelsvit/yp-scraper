@@ -33,4 +33,7 @@
     <string name="screening_hours">שעות הקרנה</string>
     <string name="title_activity_movie_screenings">MovieScreeningsActivity</string>
     <string name="no_screenings_exist">לא קיימות הקרנות לסרט כרגע</string>
+    <string name="trailer">טריילר</string>
+    <string name="trailer_does_not_exist">לא קיים במערכת טריילר לסרט זה</string>
+    <string name="unable_to_view_trailer">לא ניתן להציג את הטריילר ללא נגן מתאים</string>
 </resources>

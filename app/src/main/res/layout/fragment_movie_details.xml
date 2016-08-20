@@ -74,5 +74,12 @@
         android:id="@+id/details_screening_button"
         android:layout_gravity="center_horizontal" />
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/trailer"
+        android:id="@+id/details_trailer_button"
+        android:layout_gravity="center_horizontal" />
+
 </LinearLayout>
 
