@@ -1,5 +1,6 @@
 package com.michaelsvit.kolnoa;
 
+import android.net.Uri;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -49,9 +50,6 @@ public class YesPlanetDataParser implements CinemaDataParser {
             return null;
         }
 
-        // Base URL for posters
-        final String YES_PLANET_BASE_URL = "http://www.yesplanet.co.il/";
-
         final String IN_THEATRE = "cat_0";
         final String COMING_SOON = "cat_1";
         final String DATA_CLASS_NAME = "extended";
@@ -60,6 +58,7 @@ public class YesPlanetDataParser implements CinemaDataParser {
         final String RELEASE_DATE_CLASS_NAME = "releaseDate";
         final String SYNOPSIS_CLASS_NAME = "synopsis";
         final String POSTER_CLASS_NAME = "catPoster";
+        final String TRAILER_CLASS_NAME = "featureTrailerLink";
 
         // Data
         Element dataElem = htmlMovie.getElementsByClass(DATA_CLASS_NAME).first();
@@ -104,10 +103,49 @@ public class YesPlanetDataParser implements CinemaDataParser {
         String posterURL = null;
         if (posterURLElem != null) {
             final String attributeKey = "data-src";
-            posterURL = YES_PLANET_BASE_URL + posterURLElem.attr(attributeKey);
+            final String posterRelativePath = posterURLElem.attr(attributeKey);
+            posterURL = buildPosterURL(posterRelativePath);
         }
 
-        return new Movie(featureId, featureTitle, releaseDate, synopsis, status, posterURL);
+        // Trailer
+        Element trailerURLElem = htmlMovie.getElementsByClass(TRAILER_CLASS_NAME).first();
+        String trailerURL = null;
+        if(trailerURLElem != null) {
+            final String attributeKey = "href";
+            final String attr = trailerURLElem.attr(attributeKey);
+            trailerURL = buildTrailerURL(extractVideoCode(attr));
+        }
+
+        return new Movie(featureId, featureTitle, releaseDate, synopsis, status, posterURL, trailerURL);
+    }
+
+    private String extractVideoCode(String attr) {
+        return attr.substring(attr.indexOf("'"), attr.lastIndexOf("'"));
+    }
+
+    private String buildPosterURL(String relativePath) {
+        final String SCHEME = "http";
+        final String AUTHORITY = "www.yesplanet.co.il";
+
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme(SCHEME)
+                .authority(AUTHORITY)
+                .appendEncodedPath(relativePath);
+        return builder.build().toString();
+    }
+
+    private String buildTrailerURL(String videoCode) {
+        final String SCHEME = "https";
+        final String AUTHORITY = "www.youtube.com";
+        final String WATCH_PATH = "watch";
+        final String VIDEO_CODE_PARAM = "v";
+
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme(SCHEME)
+                .authority(AUTHORITY)
+                .appendPath(WATCH_PATH)
+                .appendQueryParameter(VIDEO_CODE_PARAM, videoCode);
+        return builder.build().toString();
     }
 
     private boolean isMovie(Element htmlMovie) {
