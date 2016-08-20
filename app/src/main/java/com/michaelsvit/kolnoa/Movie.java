@@ -19,14 +19,17 @@ public class Movie implements Parcelable {
     private String synopsis;
     private MovieStatus status;
     private String posterURL;
+    private String trailerURL;
 
-    public Movie(String id, String name, String releaseDate, String synopsis, MovieStatus status, String posterURL) {
+    public Movie(String id, String name, String releaseDate, String synopsis,
+                 MovieStatus status, String posterURL, String trailerURL) {
         this.id = id;
         this.title = name;
         this.releaseDate = releaseDate;
         this.synopsis = synopsis;
         this.status = status;
         this.posterURL = posterURL;
+        this.trailerURL = trailerURL;
     }
 
     protected Movie(Parcel in) {
@@ -35,6 +38,7 @@ public class Movie implements Parcelable {
         releaseDate = in.readString();
         synopsis = in.readString();
         posterURL = in.readString();
+        trailerURL = in.readString();
         status = (MovieStatus) in.readSerializable();
     }
 
@@ -45,6 +49,7 @@ public class Movie implements Parcelable {
         dest.writeString(releaseDate);
         dest.writeString(synopsis);
         dest.writeString(posterURL);
+        dest.writeString(trailerURL);
         dest.writeSerializable(status);
     }
 
@@ -87,5 +92,9 @@ public class Movie implements Parcelable {
 
     public String getPosterURL() {
         return posterURL;
+    }
+
+    public String getTrailerURL() {
+        return trailerURL;
     }
 }
