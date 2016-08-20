@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -58,9 +59,16 @@ public class MovieDetailsFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, MovieScreeningsActivity.class);
-                intent.putParcelableArrayListExtra(Cinema.SCHEDULE_ARG_NAME, (ArrayList<MovieScreening>)schedule);
-                startActivity(intent);
+                if (schedule != null) {
+                    Intent intent = new Intent(context, MovieScreeningsActivity.class);
+                    intent.putParcelableArrayListExtra(Cinema.SCHEDULE_ARG_NAME, (ArrayList<MovieScreening>)schedule);
+                    startActivity(intent);
+                } else {
+                    Toast toast = new Toast(context);
+                    toast.setText(R.string.no_screenings_exist);
+                    toast.setDuration(Toast.LENGTH_SHORT);
+                    toast.show();
+                }
             }
         });
 

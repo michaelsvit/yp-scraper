@@ -32,4 +32,5 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="screening_hours">שעות הקרנה</string>
     <string name="title_activity_movie_screenings">MovieScreeningsActivity</string>
+    <string name="no_screenings_exist">לא קיימות הקרנות לסרט כרגע</string>
 </resources>
