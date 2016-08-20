@@ -5,18 +5,17 @@ import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class MovieDetailsActivity extends AppCompatActivity {
+    private static final String LOG_TAG = MovieDetailsActivity.class.getSimpleName();
+
     private Movie movie;
     private List<MovieScreening> schedule;
 
@@ -47,19 +46,21 @@ public class MovieDetailsActivity extends AppCompatActivity {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        populateDetails();
+        if(savedInstanceState == null){
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            MovieDetailsFragment fragment = MovieDetailsFragment.newInstance();
+            fragmentManager
+                    .beginTransaction()
+                    .add(R.id.movie_details_fragment_container, fragment)
+                    .commit();
+        }
     }
 
-    private void populateDetails() {
-        TextView synopsisTextView = (TextView) findViewById(R.id.details_synopsis);
-        synopsisTextView.setText(movie.getSynopsis());
+    public List<MovieScreening> getSchedule() {
+        return schedule;
+    }
 
-        TextView releaseDateTextView = (TextView) findViewById(R.id.details_release_date);
-        releaseDateTextView.setText(movie.getReleaseDate());
-
-        ImageView posterImageView = (ImageView) findViewById(R.id.details_poster);
-        Picasso.with(this)
-                .load(movie.getPosterURL())
-                .into(posterImageView);
+    public Movie getMovie() {
+        return movie;
     }
 }
