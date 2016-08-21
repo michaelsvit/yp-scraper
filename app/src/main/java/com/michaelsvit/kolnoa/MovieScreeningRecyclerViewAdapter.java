@@ -26,7 +26,7 @@ public class MovieScreeningRecyclerViewAdapter extends RecyclerView.Adapter<Movi
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         MovieScreening screening = schedule.get(position);
-        holder.dateView.setText(screening.getDate() + " " + screening.getTime());
+        holder.dateView.setText(screening.getTime());
     }
 
     @Override
