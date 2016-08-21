@@ -197,7 +197,7 @@ public class YesPlanetDataParser implements CinemaDataParser {
                         JSONObject screening = screenings.getJSONObject(j);
 
                         // Screening details
-                        String date = screening.getString(SCREENING_DATE_FIELD);
+                        String date = extractDate(screening.getString(SCREENING_DATE_FIELD));
                         String time = screening.getString(SCREENING_TIME_FIELD);
                         String id = screening.getString(SCREENING_ID_FIELD);
                         int typeIndex = screening.getInt(SCREENING_TYPE_FIELD);
@@ -216,5 +216,17 @@ public class YesPlanetDataParser implements CinemaDataParser {
         }
 
         return schedule;
+    }
+
+    private String extractDate(String string) {
+        String[] arr = string.split(" ");
+        for(String substring : arr){
+            // If string contains numbers
+            if(substring.matches(".*\\d+.*")){
+                return substring;
+            }
+        }
+        // Should not reach here
+        return null;
     }
 }
