@@ -13,13 +13,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 public class MovieScreeningsFragment extends Fragment {
     private static final String LOG_TAG = MovieScreeningsFragment.class.getSimpleName();
 
     private Context context;
-    private List<MovieScreening> schedule;
+    private Map<String, List<MovieScreening>> schedule;
+    private String dateToday;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -49,15 +53,33 @@ public class MovieScreeningsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_moviescreening_list, container, false);
 
+        // Date today
+        getDate();
+
         // Set the adapter
         if (view instanceof RecyclerView) {
             this.context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
             recyclerView.addItemDecoration(new DividerItemDecoration(context));
-            recyclerView.setAdapter(new MovieScreeningRecyclerViewAdapter(schedule));
+            List<MovieScreening> screeningList = new ArrayList<>(schedule.get(dateToday));
+            recyclerView.setAdapter(new MovieScreeningRecyclerViewAdapter(screeningList));
         }
         return view;
+    }
+
+    private void getDate() {
+        Calendar calendar = Calendar.getInstance();
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int month = calendar.get(Calendar.MONTH) + 1;
+        int year = calendar.get(Calendar.YEAR);
+        dateToday = getDateString(day, month, year);
+    }
+
+    private String getDateString(int day, int month, int year) {
+        final String separator = "/";
+        return String.valueOf(day) + separator + (month < 10 ? "0":"")
+                + String.valueOf(month) + separator + String.valueOf(year);
     }
 
     // List divider

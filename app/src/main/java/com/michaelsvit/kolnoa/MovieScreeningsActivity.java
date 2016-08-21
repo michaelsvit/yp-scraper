@@ -9,17 +9,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MovieScreeningsActivity extends AppCompatActivity {
-    private List<MovieScreening> schedule;
+    private Map<String, List<MovieScreening>> schedule;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Intent intent = getIntent();
-        schedule = intent.getParcelableArrayListExtra(Cinema.SCHEDULE_ARG_NAME);
+        final List<MovieScreening> list = intent.getParcelableArrayListExtra(Cinema.SCHEDULE_ARG_NAME);
+        schedule = splitToDays(list);
 
         setContentView(R.layout.activity_movie_screenings);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -45,7 +49,24 @@ public class MovieScreeningsActivity extends AppCompatActivity {
         }
     }
 
-    public List<MovieScreening> getSchedule() {
+    private Map<String, List<MovieScreening>> splitToDays(List<MovieScreening> list) {
+        Map<String, List<MovieScreening>> splitList = new HashMap<>();
+
+        for(MovieScreening movieScreening : list){
+            String date = movieScreening.getDate();
+            if(splitList.containsKey(date)){
+                splitList.get(date).add(movieScreening);
+            } else {
+                List<MovieScreening> singleDayScreenings = new ArrayList<>();
+                singleDayScreenings.add(movieScreening);
+                splitList.put(date, singleDayScreenings);
+            }
+        }
+
+        return splitList;
+    }
+
+    public Map<String, List<MovieScreening>> getSchedule() {
         return schedule;
     }
 }
