@@ -21,8 +21,13 @@ import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.TextView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -37,17 +42,15 @@ public class MovieScreeningsFragment extends Fragment {
 
     // String representing date today
     private String dateToday;
-    // Date today split
-    private int dayToday;
-    // Starts from 0
-    private int monthToday;
-    private int yearToday;
 
     // Currently picked date
     private int dayPicked;
     // Starts from 0
     private int monthPicked;
     private int yearPicked;
+
+    // Max date for picker
+    private String maxDate;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -91,7 +94,7 @@ public class MovieScreeningsFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == R.id.action_pick_date){
-            DatePickerDialog datePicker = new DatePickerDialog(context, new DatePickerDialog.OnDateSetListener() {
+            DatePickerDialog datePickerDialog = new DatePickerDialog(context, new DatePickerDialog.OnDateSetListener() {
                 @Override
                 public void onDateSet(DatePicker datePicker, int pickerYear, int pickerMonth, int pickerDay) {
                     String dateString = getDateString(pickerDay, pickerMonth, pickerYear);
@@ -108,11 +111,61 @@ public class MovieScreeningsFragment extends Fragment {
                     setToolbarTitle(pickerDay, pickerMonth, pickerYear);
                 }
             }, yearPicked, monthPicked, dayPicked);
-
-            datePicker.show();
+            DatePicker datePicker = datePickerDialog.getDatePicker();
+            datePicker.setMinDate(System.currentTimeMillis() - 1000);
+            datePicker.setMaxDate(getMaxDate());
+            datePickerDialog.show();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private long getMaxDate() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy");
+        Date date = null;
+        try {
+            if(maxDate != null){
+                date = dateFormat.parse(maxDate);
+            } else {
+                maxDate = getMaxDateFromSchedule();
+                date = dateFormat.parse(maxDate);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+            Log.e(LOG_TAG, "Cannot parse date");
+        }
+        if (date != null) {
+            return date.getTime();
+        } else {
+            return 0;
+        }
+    }
+
+    private String getMaxDateFromSchedule() {
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy");
+        List<String> dates = new ArrayList<>(schedule.keySet());
+
+        String maxDate = Collections.max(dates, new Comparator<String>() {
+            @Override
+            public int compare(String dateString0, String dateString1) {
+                Date date0 = null;
+                Date date1 = null;
+                try {
+                    date0 = dateFormat.parse(dateString0);
+                    date1 = dateFormat.parse(dateString1);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                if (date0 != null && date1 != null) {
+                    return date0.compareTo(date1);
+                } else {
+                    Log.e(LOG_TAG, "Error parsing dates when comparing");
+                    return 0;
+                }
+            }
+        });
+
+        return maxDate;
     }
 
     private void setToolbarTitle(int day, int month, int year) {
@@ -176,9 +229,10 @@ public class MovieScreeningsFragment extends Fragment {
 
     private void getDateAndSetTitle(Activity activity) {
         Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
-        dayToday = calendar.get(Calendar.DAY_OF_MONTH);
-        monthToday = calendar.get(Calendar.MONTH);
-        yearToday = calendar.get(Calendar.YEAR);
+        int dayToday = calendar.get(Calendar.DAY_OF_MONTH);
+        // Starts from 0
+        int monthToday = calendar.get(Calendar.MONTH);
+        int yearToday = calendar.get(Calendar.YEAR);
         dateToday = getDateString(dayToday, monthToday, yearToday);
         setToolbarTitle(dayToday, monthToday, yearToday);
 
