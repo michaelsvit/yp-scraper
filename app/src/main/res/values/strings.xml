@@ -36,4 +36,13 @@
     <string name="trailer">טריילר</string>
     <string name="trailer_does_not_exist">לא קיים במערכת טריילר לסרט זה</string>
     <string name="unable_to_view_trailer">לא ניתן להציג את הטריילר ללא נגן מתאים</string>
+    <string name="pick_date">בחר תאריך</string>
+    <string name="today">היום</string>
+    <string name="sunday">"יום ראשון"</string>
+    <string name="monday">"יום שני"</string>
+    <string name="tuesday">"יום שלישי"</string>
+    <string name="wednesday">"יום רביעי"</string>
+    <string name="thursday">"יום חמישי"</string>
+    <string name="friday">"יום שישי"</string>
+    <string name="saturday">"יום שבת"</string>
 </resources>
