@@ -200,9 +200,11 @@ public class YesPlanetDataParser implements CinemaDataParser {
                         String date = extractDate(screening.getString(SCREENING_DATE_FIELD));
                         String time = screening.getString(SCREENING_TIME_FIELD);
                         String id = screening.getString(SCREENING_ID_FIELD);
-                        int typeIndex = screening.getInt(SCREENING_TYPE_FIELD);
+                        String type = screeningTypes.getString(screening.getInt(SCREENING_TYPE_FIELD));
+                        int hallNumber = extractHallNumber(id);
 
-                        movieScreenings.add(new MovieScreening(date, time, id, screeningTypes.getString(typeIndex)));
+                        movieScreenings.add(new MovieScreening(date, time, id,
+                                type, hallNumber));
                     }
 
                     schedule.put(movieId, movieScreenings);
@@ -216,6 +218,18 @@ public class YesPlanetDataParser implements CinemaDataParser {
         }
 
         return schedule;
+    }
+
+    private int extractHallNumber(String id) {
+        String firstPart = id.split("-")[0];
+        if(firstPart.length() == 12) {
+            return Integer.valueOf(firstPart.substring(4, 6));
+        } else if(firstPart.length() == 11) {
+            return Character.getNumericValue(firstPart.charAt(4));
+        } else {
+            Log.e(LOG_TAG, "Hall number extraction failed - length incorrect");
+        }
+        return 0;
     }
 
     private String extractDate(String string) {

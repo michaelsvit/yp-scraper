@@ -11,12 +11,14 @@ public class MovieScreening implements Parcelable {
     private String time;
     private String id;
     private String type;
+    private int hallNumber;
 
-    public MovieScreening(String date, String time, String id, String type) {
+    public MovieScreening(String date, String time, String id, String type, int hallNumber) {
         this.date = date;
         this.time = time;
         this.id = id;
         this.type = type;
+        this.hallNumber = hallNumber;
     }
 
     protected MovieScreening(Parcel in) {
@@ -24,6 +26,7 @@ public class MovieScreening implements Parcelable {
         time = in.readString();
         id = in.readString();
         type = in.readString();
+        hallNumber = in.readInt();
     }
 
     public static final Creator<MovieScreening> CREATOR = new Creator<MovieScreening>() {
@@ -49,6 +52,7 @@ public class MovieScreening implements Parcelable {
         parcel.writeString(time);
         parcel.writeString(id);
         parcel.writeString(type);
+        parcel.writeInt(hallNumber);
     }
 
     public String getDate() {
@@ -65,5 +69,9 @@ public class MovieScreening implements Parcelable {
 
     public String getType() {
         return type;
+    }
+
+    public int getHallNumber() {
+        return hallNumber;
     }
 }
