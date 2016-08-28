@@ -1,6 +1,5 @@
 package com.michaelsvit.kolnoa;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -40,6 +39,10 @@ public class MovieScreeningsFragment extends Fragment {
     private List<MovieScreening> screeningList;
     private MovieScreeningRecyclerViewAdapter adapter;
 
+    private RecyclerView recyclerView;
+    // Shows when the recycler is empty
+    private TextView textView;
+
     // String representing date today
     private String dateToday;
 
@@ -73,7 +76,7 @@ public class MovieScreeningsFragment extends Fragment {
             this.schedule = activity.getSchedule();
 
             // Date today
-            getDateAndSetTitle(activity);
+            getDateAndSetTitle();
         } else {
             Log.d(LOG_TAG, "Attached to activity different from MovieScreeningsActivity");
         }
@@ -93,7 +96,7 @@ public class MovieScreeningsFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.action_pick_date){
+        if (item.getItemId() == R.id.action_pick_date) {
             DatePickerDialog datePickerDialog = new DatePickerDialog(context, new DatePickerDialog.OnDateSetListener() {
                 @Override
                 public void onDateSet(DatePicker datePicker, int pickerYear, int pickerMonth, int pickerDay) {
@@ -102,6 +105,7 @@ public class MovieScreeningsFragment extends Fragment {
                     // Update list contents
                     screeningList.clear();
                     screeningList.addAll(schedule.get(dateString));
+                    showTextIfEmpty(screeningList);
                     adapter.notifyDataSetChanged();
 
                     yearPicked = pickerYear;
@@ -124,7 +128,7 @@ public class MovieScreeningsFragment extends Fragment {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy");
         Date date = null;
         try {
-            if(maxDate != null){
+            if (maxDate != null) {
                 date = dateFormat.parse(maxDate);
             } else {
                 maxDate = getMaxDateFromSchedule();
@@ -171,12 +175,12 @@ public class MovieScreeningsFragment extends Fragment {
     private void setToolbarTitle(int day, int month, int year) {
         String dateString = getDateString(day, month, year);
         String title = "";
-        if(dateString.equals(dateToday)){
+        if (dateString.equals(dateToday)) {
             title = getString(R.string.today) + " " + dateString;
         } else {
             Calendar calendar = Calendar.getInstance();
             calendar.set(year, month, day);
-            switch(calendar.get(Calendar.DAY_OF_WEEK)){
+            switch (calendar.get(Calendar.DAY_OF_WEEK)) {
                 case 1:
                     title = getString(R.string.sunday) + " " + dateString;
                     break;
@@ -209,25 +213,33 @@ public class MovieScreeningsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_moviescreening_list, container, false);
 
+        Context context = view.getContext();
+        recyclerView = (RecyclerView) view.findViewById(R.id.screenings_recycler);
+        textView = (TextView) view.findViewById(R.id.movie_screenings_empty_text);
+
         // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            recyclerView.addItemDecoration(new DividerItemDecoration(context));
-            List<MovieScreening> screenings = schedule.get(dateToday);
-            if (screenings != null) {
-                screeningList = new ArrayList<>(screenings);
-            } else {
-                screeningList = new ArrayList<>();
-            }
-            adapter = new MovieScreeningRecyclerViewAdapter(screeningList);
-            recyclerView.setAdapter(adapter);
-        }
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        recyclerView.addItemDecoration(new DividerItemDecoration(context));
+        List<MovieScreening> screenings = schedule.get(dateToday);
+        showTextIfEmpty(screenings);
+        adapter = new MovieScreeningRecyclerViewAdapter(screeningList);
+        recyclerView.setAdapter(adapter);
         return view;
     }
 
-    private void getDateAndSetTitle(Activity activity) {
+    private void showTextIfEmpty(List<MovieScreening> screenings) {
+        if (screenings != null) {
+            screeningList = new ArrayList<>(screenings);
+            recyclerView.setVisibility(View.VISIBLE);
+            textView.setVisibility(View.GONE);
+        } else {
+            screeningList = new ArrayList<>();
+            recyclerView.setVisibility(View.GONE);
+            textView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void getDateAndSetTitle() {
         Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
         int dayToday = calendar.get(Calendar.DAY_OF_MONTH);
         // Starts from 0
@@ -244,8 +256,8 @@ public class MovieScreeningsFragment extends Fragment {
 
     private String getDateString(int day, int month, int year) {
         final String separator = "/";
-        return String.valueOf(day) + separator + (month+1 < 10 ? "0":"")
-                + String.valueOf(month+1) + separator + String.valueOf(year);
+        return String.valueOf(day) + separator + (month + 1 < 10 ? "0" : "")
+                + String.valueOf(month + 1) + separator + String.valueOf(year);
     }
 
     // List divider
