@@ -62,7 +62,6 @@ public class MovieDetailsFragment extends Fragment {
 
         spinner = (Spinner) rootView.findViewById(R.id.sites_spinner);
         ArrayAdapter<Site> spinnerAdapter = new ArrayAdapter<>(context, R.layout.sites_spinner_item, sites);
-        //SpinnerAdapter spinnerAdapter = new SpinnerArrayAdapter(context, R.layout.sites_spinner_item, sites);
         spinner.setAdapter(spinnerAdapter);
 
         populateDetails(rootView);
