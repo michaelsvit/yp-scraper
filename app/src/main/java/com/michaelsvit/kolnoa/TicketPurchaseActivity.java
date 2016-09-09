@@ -9,15 +9,14 @@ import android.support.v7.widget.Toolbar;
 
 public class TicketPurchaseActivity extends AppCompatActivity {
 
-    private String screeningId;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // Get screening ID from intent
         Intent intent = getIntent();
-        screeningId = intent.getStringExtra(MovieScreening.ARG_NAME);
+        String screeningId = intent.getStringExtra(MovieScreening.ARG_NAME);
+        String siteTicketsUrl = intent.getStringExtra(Site.TICKETS_URL_ARG_NAME);
 
         setContentView(R.layout.activity_ticket_purchase);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -30,6 +29,7 @@ public class TicketPurchaseActivity extends AppCompatActivity {
 
             Bundle args = new Bundle();
             args.putString(MovieScreening.ARG_NAME, screeningId);
+            args.putString(Site.TICKETS_URL_ARG_NAME, siteTicketsUrl);
             fragment.setArguments(args);
 
             FragmentManager fragmentManager = getSupportFragmentManager();
