@@ -35,6 +35,7 @@ public class MovieScreeningsFragment extends Fragment {
     private static final String LOG_TAG = MovieScreeningsFragment.class.getSimpleName();
 
     private Context context;
+    private Site site;
     private Map<String, List<MovieScreening>> schedule;
     private List<MovieScreening> screeningList;
     private MovieScreeningRecyclerViewAdapter adapter;
@@ -62,8 +63,11 @@ public class MovieScreeningsFragment extends Fragment {
     public MovieScreeningsFragment() {
     }
 
-    public static MovieScreeningsFragment newInstance() {
+    public static MovieScreeningsFragment newInstance(Site site) {
         MovieScreeningsFragment fragment = new MovieScreeningsFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(Site.SITE_ARG_NAME, site);
+        fragment.setArguments(args);
         return fragment;
     }
 
@@ -86,6 +90,7 @@ public class MovieScreeningsFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        site = getArguments().getParcelable(Site.SITE_ARG_NAME);
     }
 
     @Override
@@ -222,7 +227,7 @@ public class MovieScreeningsFragment extends Fragment {
         recyclerView.addItemDecoration(new DividerItemDecoration(context));
         List<MovieScreening> screenings = schedule.get(dateToday);
         showTextIfEmpty(screenings);
-        adapter = new MovieScreeningRecyclerViewAdapter(screeningList);
+        adapter = new MovieScreeningRecyclerViewAdapter(context, screeningList, site.getTicketsUrl());
         recyclerView.setAdapter(adapter);
         return view;
     }

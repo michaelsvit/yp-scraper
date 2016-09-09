@@ -16,6 +16,7 @@ import java.util.Map;
 
 public class MovieScreeningsActivity extends AppCompatActivity {
     private Map<String, List<MovieScreening>> schedule;
+    private Site site;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +25,7 @@ public class MovieScreeningsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         final List<MovieScreening> list = intent.getParcelableArrayListExtra(Cinema.SCHEDULE_ARG_NAME);
         schedule = splitToDays(list);
+        site = intent.getParcelableExtra(Site.SITE_ARG_NAME);
 
         setContentView(R.layout.activity_movie_screenings);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -37,7 +39,7 @@ public class MovieScreeningsActivity extends AppCompatActivity {
 
         if(savedInstanceState == null){
             FragmentManager fragmentManager = getSupportFragmentManager();
-            MovieScreeningsFragment fragment = MovieScreeningsFragment.newInstance();
+            MovieScreeningsFragment fragment = MovieScreeningsFragment.newInstance(site);
             fragmentManager
                     .beginTransaction()
                     .add(R.id.movie_screenings_fragment_container, fragment)
