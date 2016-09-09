@@ -9,8 +9,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,7 +26,10 @@ public class MovieDetailsFragment extends Fragment {
 
     private Context context;
     private Movie movie;
-    private List<MovieScreening> schedule;
+    private List<Site> sites;
+    private MovieSchedule schedule;
+
+    private Spinner spinner;
 
     public MovieDetailsFragment() {
         // Required empty public constructor
@@ -41,6 +46,7 @@ public class MovieDetailsFragment extends Fragment {
         if (context instanceof MovieDetailsActivity) {
             MovieDetailsActivity activity = (MovieDetailsActivity) context;
             this.movie = activity.getMovie();
+            this.sites = activity.getSites();
             this.schedule = activity.getSchedule();
         } else {
             Log.d(LOG_TAG, "Attached to activity different from MovieDetailsActivity");
@@ -54,6 +60,11 @@ public class MovieDetailsFragment extends Fragment {
         // Inflate the layout for this fragment
         final View rootView = inflater.inflate(R.layout.fragment_movie_details, container, false);
 
+        spinner = (Spinner) rootView.findViewById(R.id.sites_spinner);
+        ArrayAdapter<Site> spinnerAdapter = new ArrayAdapter<>(context, R.layout.sites_spinner_item, sites);
+        //SpinnerAdapter spinnerAdapter = new SpinnerArrayAdapter(context, R.layout.sites_spinner_item, sites);
+        spinner.setAdapter(spinnerAdapter);
+
         populateDetails(rootView);
 
         Button screeningsButton = (Button) rootView.findViewById(R.id.details_screening_button);
@@ -61,8 +72,13 @@ public class MovieDetailsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (schedule != null) {
+                    // TODO: check if schedule is empty for selected site
                     Intent intent = new Intent(context, MovieScreeningsActivity.class);
-                    intent.putParcelableArrayListExtra(Cinema.SCHEDULE_ARG_NAME, (ArrayList<MovieScreening>)schedule);
+                    Site selectedSite = (Site) spinner.getSelectedItem();
+                    int siteId = selectedSite.getId();
+                    ArrayList<MovieScreening> movieSchedule = (ArrayList<MovieScreening>) schedule.getMovieScheduleInSite(siteId);
+                    intent.putParcelableArrayListExtra(Cinema.SCHEDULE_ARG_NAME, movieSchedule);
+                    intent.putExtra(Site.SITE_ARG_NAME, selectedSite);
                     startActivity(intent);
                 } else {
                     makeToast(R.string.no_screenings_exist);
