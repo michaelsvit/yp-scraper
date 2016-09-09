@@ -261,8 +261,11 @@ public class MovieScreeningsFragment extends Fragment {
 
     private String getDateString(int day, int month, int year) {
         final String separator = "/";
-        return String.valueOf(day) + separator + (month + 1 < 10 ? "0" : "")
-                + String.valueOf(month + 1) + separator + String.valueOf(year);
+        return (day < 10 ? "0" : "")
+                + String.valueOf(day) + separator
+                + (month + 1 < 10 ? "0" : "")
+                + String.valueOf(month + 1) + separator
+                + String.valueOf(year);
     }
 
     // List divider
