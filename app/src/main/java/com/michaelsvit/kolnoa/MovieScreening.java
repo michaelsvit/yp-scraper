@@ -7,6 +7,8 @@ import android.os.Parcelable;
  * Created by Michael on 8/15/2016.
  */
 public class MovieScreening implements Parcelable {
+    public static final String ARG_NAME = "screening";
+
     private String date;
     private String time;
     private String id;
