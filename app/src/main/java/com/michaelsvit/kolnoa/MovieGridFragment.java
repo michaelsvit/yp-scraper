@@ -62,19 +62,19 @@ public class MovieGridFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_movies_grid, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_movies_grid, container, false);
 
-        Context context = view.getContext();
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.fragment_movies_recycler_view);
+        Context context = rootView.getContext();
+        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.fragment_movies_recycler_view);
         recyclerView.setLayoutManager(new GridLayoutManager(context, columnCount));
         adapter = new MovieRecyclerViewAdapter(context, cinema);
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
 
-        initWebView(view);
+        initWebView(rootView);
         fetchData();
 
-        return view;
+        return rootView;
     }
 
     private void fetchData() {
