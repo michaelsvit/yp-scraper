@@ -2,16 +2,16 @@ package com.michaelsvit.kolnoa;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Represents a single cinema
  */
 public abstract class Cinema{
     public static final String SCHEDULE_ARG_NAME = "schedule";
+    public static final String SITES_ARG_NAME = "sites";
 
     public enum CinemaName{
-        YESPLANET
+        YES_PLANET
     }
 
     private String name;
@@ -21,7 +21,7 @@ public abstract class Cinema{
     private CinemaDataParser cinemaDataParser;
 
     private List<Movie> movies;
-    private Map<String, List<MovieScreening>> schedule;
+    private Schedule schedule;
 
     public Cinema(String name, String url, String moviesUrl, String scheduleUrl, CinemaDataParser cinemaDataParser) {
         this.name = name;
@@ -52,8 +52,12 @@ public abstract class Cinema{
         return movies.get(position);
     }
 
-    public List<MovieScreening> getMovieSchedule(String movieId){
-        return schedule.get(movieId);
+    public MovieSchedule getMovieSchedule(String movieId){
+        return new MovieSchedule(schedule.getMovieSchedule(movieId));
+    }
+
+    public List<Site> getSites(){
+        return schedule.getSites();
     }
 
     public int getMoviesCount(){

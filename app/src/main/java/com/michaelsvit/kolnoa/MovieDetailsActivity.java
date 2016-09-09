@@ -17,7 +17,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private static final String LOG_TAG = MovieDetailsActivity.class.getSimpleName();
 
     private Movie movie;
-    private List<MovieScreening> schedule;
+    private List<Site> sites;
+    private MovieSchedule schedule;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +26,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         final Intent intent = getIntent();
         movie = intent.getParcelableExtra(Movie.ARG_NAME);
-        schedule = intent.getParcelableArrayListExtra(Cinema.SCHEDULE_ARG_NAME);
+        sites = intent.getParcelableArrayListExtra(Cinema.SITES_ARG_NAME);
+        schedule = intent.getParcelableExtra(Cinema.SCHEDULE_ARG_NAME);
 
         setContentView(R.layout.activity_movie_details);
         CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
@@ -56,7 +58,11 @@ public class MovieDetailsActivity extends AppCompatActivity {
         }
     }
 
-    public List<MovieScreening> getSchedule() {
+    public List<Site> getSites() {
+        return sites;
+    }
+
+    public MovieSchedule getSchedule() {
         return schedule;
     }
 

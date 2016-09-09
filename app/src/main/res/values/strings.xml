@@ -46,4 +46,5 @@
     <string name="friday">"יום שישי"</string>
     <string name="saturday">"יום שבת"</string>
     <string name="no_screenings_this_day">לא קיימות הצגות לסרט המבוקש ביום זה, אנא בחר יום אחר</string>
+    <string name="title_activity_ticket_purchase">TicketPurchaseActivity</string>
 </resources>

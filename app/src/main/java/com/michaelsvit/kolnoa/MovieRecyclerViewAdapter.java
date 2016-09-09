@@ -73,8 +73,9 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
                     Movie movie = cinema.getMovie(position);
                     Intent intent = new Intent(context, MovieDetailsActivity.class);
                     intent.putExtra(Movie.ARG_NAME, movie);
-                    intent.putParcelableArrayListExtra(Cinema.SCHEDULE_ARG_NAME,
-                            (ArrayList<MovieScreening>) cinema.getMovieSchedule(movie.getId()));
+                    intent.putParcelableArrayListExtra(Cinema.SITES_ARG_NAME,
+                            (ArrayList<Site>) cinema.getSites());
+                    intent.putExtra(Cinema.SCHEDULE_ARG_NAME, cinema.getMovieSchedule(movie.getId()));
                     context.startActivity(intent);
                 }
             });

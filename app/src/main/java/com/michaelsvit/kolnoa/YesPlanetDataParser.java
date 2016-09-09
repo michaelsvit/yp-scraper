@@ -154,14 +154,14 @@ public class YesPlanetDataParser implements CinemaDataParser {
     }
 
     @Override
-    public Map<String, List<MovieScreening>> parseScheduleJSON(String json) {
+    public Schedule parseScheduleJSON(String json) {
         final String SITES_ARRAY = "sites";
         final String LANGUAGES_ARRAY = "languages";
         final String SCREENING_TYPE_ARRAY = "venueTypes";
         final String SITE_NAME_FIELD = "sn";
         final String SITE_TICKETS_URL_FIELD = "tu";
         final String SITE_FEATURES_ARRAY = "fe";
-        final String SITE_ID = "si";
+        final String SITE_ID_FIELD = "si";
         final String FEATURE_ID_FIELD = "dc";
         final String FEATURE_LANGUAGE_FIELD = "ol";
         final String FEATURE_SCREENINGS_ARRAY = "pr";
@@ -170,26 +170,44 @@ public class YesPlanetDataParser implements CinemaDataParser {
         final String SCREENING_ID_FIELD = "pc";
         final String SCREENING_TYPE_FIELD = "vt";
 
-        final int YES_PLANET_RASHLATZ_INDEX = 2;
-        final int YES_PLANET_RASHLATZ_ID = 1010003;
-
-        Map<String, List<MovieScreening>> schedule = new HashMap<>();
+        List<Site> sites = new ArrayList<>();
+        Map<Integer, SiteSchedule> siteScheduleMap = new HashMap<>();
         try {
             JSONObject root = new JSONObject(json);
             JSONArray languages = root.getJSONArray(LANGUAGES_ARRAY);
             JSONArray screeningTypes = root.getJSONArray(SCREENING_TYPE_ARRAY);
-            JSONArray sites = root.getJSONArray(SITES_ARRAY);
+            JSONArray sitesArray = root.getJSONArray(SITES_ARRAY);
 
-            // Extract schedule only from YesPlanet Rishon Lezion
-            JSONObject site = sites.getJSONObject(YES_PLANET_RASHLATZ_INDEX);
-            if(site.getInt(SITE_ID) == YES_PLANET_RASHLATZ_ID){
-                JSONArray movies = site.getJSONArray(SITE_FEATURES_ARRAY);
-                for(int i = 0; i < movies.length(); i++){
-                    JSONObject movie = movies.getJSONObject(i);
+            for(int k = 0; k < sitesArray.length(); k++){
+                JSONObject site = sitesArray.getJSONObject(k);
+
+                int siteId = site.getInt(SITE_ID_FIELD);
+                String siteNameString = site.getString(SITE_NAME_FIELD);
+                String siteName;
+                if (badEncoding(siteNameString)) {
+                    siteName = matchSiteNameById(siteId);
+                } else {
+                    siteName = siteNameString;
+                }
+                String siteTicketsUrl = null;
+                // Some sites have no such field
+                if (site.has(SITE_TICKETS_URL_FIELD)) {
+                    siteTicketsUrl = site.getString(SITE_TICKETS_URL_FIELD);
+                }
+                Map<String, List<MovieScreening>> siteSchedule = new HashMap<>();
+
+                JSONArray siteMovies = site.getJSONArray(SITE_FEATURES_ARRAY);
+                for(int i = 0; i < siteMovies.length(); i++){
+                    JSONObject movie = siteMovies.getJSONObject(i);
 
                     // Movie details
                     String movieId = movie.getString(FEATURE_ID_FIELD);
-                    int movieLanguage = movie.getInt(FEATURE_LANGUAGE_FIELD);
+                    int movieLanguage = 0;
+                    if(movie.has(FEATURE_LANGUAGE_FIELD)) {
+                        movieLanguage = movie.getInt(FEATURE_LANGUAGE_FIELD);
+                    } else {
+                        Log.e(LOG_TAG, "Cannot retrieve language for movie ID: " + movieId);
+                    }
 
                     JSONArray screenings = movie.getJSONArray(FEATURE_SCREENINGS_ARRAY);
                     List<MovieScreening> movieScreenings = new ArrayList<>(screenings.length());
@@ -207,17 +225,65 @@ public class YesPlanetDataParser implements CinemaDataParser {
                                 type, hallNumber));
                     }
 
-                    schedule.put(movieId, movieScreenings);
+                    siteSchedule.put(movieId, movieScreenings);
                 }
-            } else {
-                Log.d(LOG_TAG, "Cinema is not YesPlanet Rashlatz");
+
+                // If site has no tickets url field, try to extract it from movie presentation code
+                if(siteTicketsUrl == null && siteSchedule.size() > 0){
+                    siteTicketsUrl = constructSiteUrl(siteSchedule);
+                }
+
+                sites.add(new Site(siteName, siteId, siteTicketsUrl));
+                siteScheduleMap.put(siteId, new SiteSchedule(siteSchedule));
             }
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e(LOG_TAG, "Error parsing JSON");
         }
 
-        return schedule;
+        return new Schedule(sites, siteScheduleMap);
+    }
+
+    private boolean badEncoding(String string) {
+        return !string.contains("יס פלאנט");
+    }
+
+    private String matchSiteNameById(int id) {
+        switch(id){
+            case 1010001:
+                return "יס פלאנט - אילון";
+            case 1010002:
+                return "יס פלאנט - חיפה";
+            case 1010003:
+                return "יס פלאנט - ראשלצ";
+            case 1010004:
+                return "יס פלאנט - ירושלים";
+            case 1010005:
+                return "יס פלאנט - באר שבע";
+            default:
+                Log.e(LOG_TAG, "Error matching site name to id.");
+                return null;
+        }
+    }
+
+    private String constructSiteUrl(Map<String, List<MovieScreening>> siteSchedule) {
+        // Get first movie schedule
+        List<MovieScreening> someSchedule = siteSchedule.values().iterator().next();
+        MovieScreening firstScreening = someSchedule.get(0);
+        String screeningId = firstScreening.getId();
+        String siteTicketsId = extractSiteTicketsId(screeningId);
+        return createUrlWithId(siteTicketsId);
+    }
+
+    private String createUrlWithId(String siteTicketsId) {
+        final String urlTemplate = "http://tickets.yesplanet.co.il/ypa?key=1025&ec=$PrsntCode$";
+        return urlTemplate.replace("key=1025", "key=" + siteTicketsId);
+    }
+
+    private String extractSiteTicketsId(String screeningId) {
+        // Extract 4 first digits of the screening id.
+        // Example id: 102510090316-302891   Returns: 1025
+        return screeningId.substring(0,4);
     }
 
     private int extractHallNumber(String id) {

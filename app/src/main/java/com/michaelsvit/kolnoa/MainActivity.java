@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity
         // TODO: move this to drawer logic
         FragmentManager manager = getSupportFragmentManager();
         manager.beginTransaction()
-                .add(R.id.main_container ,MovieGridFragment.newInstance(Cinema.CinemaName.YESPLANET))
+                .add(R.id.main_container ,MovieGridFragment.newInstance(Cinema.CinemaName.YES_PLANET))
                 .commit();
     }
 
