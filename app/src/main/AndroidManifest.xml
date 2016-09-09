@@ -32,11 +32,21 @@
         <activity
             android:name=".MovieScreeningsActivity"
             android:label="@string/title_activity_movie_screenings"
+            android:launchMode="singleTop"
             android:parentActivityName=".MovieDetailsActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.michaelsvit.kolnoa.MovieDetailsActivity" />
+        </activity>
+        <activity
+            android:name=".TicketPurchaseActivity"
+            android:label="@string/title_activity_ticket_purchase"
+            android:parentActivityName=".MovieScreeningsActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.michaelsvit.kolnoa.MovieScreeningsActivity" />
         </activity>
     </application>
 
