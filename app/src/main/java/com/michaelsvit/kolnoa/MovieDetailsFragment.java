@@ -71,14 +71,17 @@ public class MovieDetailsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (schedule != null) {
-                    // TODO: check if schedule is empty for selected site
                     Intent intent = new Intent(context, MovieScreeningsActivity.class);
                     Site selectedSite = (Site) spinner.getSelectedItem();
                     int siteId = selectedSite.getId();
                     ArrayList<MovieScreening> movieSchedule = (ArrayList<MovieScreening>) schedule.getMovieScheduleInSite(siteId);
-                    intent.putParcelableArrayListExtra(Cinema.SCHEDULE_ARG_NAME, movieSchedule);
-                    intent.putExtra(Site.SITE_ARG_NAME, selectedSite);
-                    startActivity(intent);
+                    if (movieSchedule != null) {
+                        intent.putParcelableArrayListExtra(Cinema.SCHEDULE_ARG_NAME, movieSchedule);
+                        intent.putExtra(Site.SITE_ARG_NAME, selectedSite);
+                        startActivity(intent);
+                    } else {
+                        makeToast(R.string.no_screenings_in_site);
+                    }
                 } else {
                     makeToast(R.string.no_screenings_exist);
                 }
