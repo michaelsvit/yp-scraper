@@ -3,7 +3,6 @@ package com.michaelsvit.kolnoa;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +20,8 @@ public class ScreeningSeatMapFragment extends Fragment {
     private String siteTicketsUrl;
 
     private WebView webView;
+
+    private SeatMap seatMap;
 
     public ScreeningSeatMapFragment() {
     }
@@ -57,7 +58,7 @@ public class ScreeningSeatMapFragment extends Fragment {
         class JSInterface{
             @JavascriptInterface
             public void processHTML(String html){
-                Log.d(LOG_TAG, html);
+                seatMap = new SeatMap(html);
             }
         }
 
