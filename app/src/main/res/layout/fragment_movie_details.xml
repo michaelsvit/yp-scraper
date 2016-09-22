@@ -10,12 +10,6 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <com.michaelsvit.kolnoa.FixedAspectRatioImageView
-            android:id="@+id/details_poster"
-            android:layout_width="0dp"
-            android:layout_height="100dp"
-            android:layout_weight="1" />
-
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -57,6 +51,12 @@
                 android:textSize="17sp" />
 
         </LinearLayout>
+
+        <com.michaelsvit.kolnoa.FixedAspectRatioImageView
+            android:id="@+id/details_poster"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_weight="1" />
 
     </LinearLayout>
 

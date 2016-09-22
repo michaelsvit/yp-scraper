@@ -18,6 +18,7 @@
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingBottom="@dimen/nav_header_vertical_spacing"
         android:text="@string/kolnoa"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:paddingStart="@dimen/activity_horizontal_margin" />
 
 </RelativeLayout>

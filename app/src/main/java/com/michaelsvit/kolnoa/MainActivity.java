@@ -1,5 +1,6 @@
 package com.michaelsvit.kolnoa;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
@@ -11,12 +12,20 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.Locale;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Set locale to correspond to Hebrew
+        Configuration configuration = getResources().getConfiguration();
+        configuration.setLayoutDirection(new Locale("he"));
+        getResources().updateConfiguration(configuration, getResources().getDisplayMetrics());
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

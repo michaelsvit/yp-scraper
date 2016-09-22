@@ -1,6 +1,7 @@
 package com.michaelsvit.kolnoa;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -12,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import java.util.List;
+import java.util.Locale;
 
 public class MovieDetailsActivity extends AppCompatActivity {
     private static final String LOG_TAG = MovieDetailsActivity.class.getSimpleName();
@@ -23,6 +25,11 @@ public class MovieDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Set locale to correspond to Hebrew
+        Configuration configuration = getResources().getConfiguration();
+        configuration.setLayoutDirection(new Locale("he"));
+        getResources().updateConfiguration(configuration, getResources().getDisplayMetrics());
 
         final Intent intent = getIntent();
         movie = intent.getParcelableExtra(Movie.ARG_NAME);

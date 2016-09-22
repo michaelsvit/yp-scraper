@@ -1,6 +1,7 @@
 package com.michaelsvit.kolnoa;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
@@ -12,6 +13,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class MovieScreeningsActivity extends AppCompatActivity {
@@ -21,6 +23,11 @@ public class MovieScreeningsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Set locale to correspond to Hebrew
+        Configuration configuration = getResources().getConfiguration();
+        configuration.setLayoutDirection(new Locale("he"));
+        getResources().updateConfiguration(configuration, getResources().getDisplayMetrics());
 
         Intent intent = getIntent();
         final List<MovieScreening> list = intent.getParcelableArrayListExtra(Cinema.SCHEDULE_ARG_NAME);
