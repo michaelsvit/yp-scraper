@@ -41,7 +41,7 @@
         </activity>
         <activity
             android:name=".TicketPurchaseActivity"
-            android:label="@string/title_activity_ticket_purchase"
+            android:label="@string/hall_map"
             android:parentActivityName=".MovieScreeningsActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <meta-data
