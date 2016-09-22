@@ -1,14 +1,20 @@
 package com.michaelsvit.kolnoa;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -19,7 +25,9 @@ public class ScreeningSeatMapFragment extends Fragment {
     private String screeningId;
     private String siteTicketsUrl;
 
+    private Context context;
     private WebView webView;
+    private TableLayout tableLayout;
 
     private SeatMap seatMap;
 
@@ -38,6 +46,8 @@ public class ScreeningSeatMapFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_seat_map, container, false);
+        context = rootView.getContext();
+        tableLayout = (TableLayout) rootView.findViewById(R.id.seat_map_table);
 
         initWebView(rootView);
         fetchData();
@@ -54,11 +64,69 @@ public class ScreeningSeatMapFragment extends Fragment {
         return siteTicketsUrl.replace("$PrsntCode$", screeningId);
     }
 
-    private void initWebView(View rootView) {
+    private void displaySeatMap() {
+        int rows = seatMap.getRows();
+        int rowCounter = 1;
+        for(int i = 0; i < rows; i++){
+            TableRow tableRow = new TableRow(context);
+            int cols = seatMap.getCols();
+
+            boolean rowEmpty = seatMap.isRowEmpty(i);
+            if(!rowEmpty){
+                tableRow.addView(createRowNumText(rowCounter));
+            }
+
+            for(int j = 0; j < cols; j++){
+                Seat seat = seatMap.getSeat(i,j);
+                TextView view = new TextView(context);
+                TableRow.LayoutParams params = new TableRow.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f);
+                params.setMargins(3,3,3,3);
+                view.setLayoutParams(params);
+                if (seat != null) {
+                    Seat.Status seatStatus = seat.getStatus();
+                    if(seatStatus == Seat.Status.UNOCCUPIED && !seat.isHandicap()) {
+                        view.setBackgroundColor(Color.LTGRAY);
+                    } else if( seatStatus == Seat.Status.UNOCCUPIED && seat.isHandicap()){
+                        view.setBackgroundColor(Color.parseColor("#2196f3"));
+                    } else {
+                        view.setBackgroundColor(Color.GRAY);
+                    }
+                }
+                tableRow.addView(view);
+            }
+
+            if(!rowEmpty){
+                tableRow.addView(createRowNumText(rowCounter));
+                rowCounter++;
+            }
+
+            tableLayout.addView(tableRow);
+        }
+    }
+
+    private TextView createRowNumText(int rowNumber) {
+        TextView textView = new TextView(context);
+        TableRow.LayoutParams params = new TableRow.LayoutParams(0,TableRow.LayoutParams.WRAP_CONTENT, 2f);
+        params.setMargins(3,3,3,3);
+        textView.setLayoutParams(params);
+        textView.setGravity(Gravity.CENTER);
+        textView.setSingleLine();
+        textView.setText(String.valueOf(rowNumber));
+        textView.setTextSize(12f);
+        return textView;
+    }
+
+    private void initWebView(final View rootView) {
         class JSInterface{
             @JavascriptInterface
             public void processHTML(String html){
                 seatMap = new SeatMap(html);
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        displaySeatMap();
+                    }
+                });
             }
         }
 

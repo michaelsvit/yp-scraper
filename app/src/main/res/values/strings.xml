@@ -48,4 +48,9 @@
     <string name="no_screenings_this_day">לא קיימות הצגות לסרט המבוקש ביום זה, אנא בחר יום אחר</string>
     <string name="title_activity_ticket_purchase">TicketPurchaseActivity</string>
     <string name="no_screenings_in_site">לא קיימות הקרנות לסרט במתחם שנבחר, אנא בחר מתחם אחר מהרשימה</string>
+    <string name="screen">מסך</string>
+    <string name="unoccupied">פנוי</string>
+    <string name="occupied">תפוס</string>
+    <string name="handicap">נכים</string>
+    <string name="hall_map">מפת האולם</string>
 </resources>

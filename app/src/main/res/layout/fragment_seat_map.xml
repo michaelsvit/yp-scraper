@@ -5,6 +5,98 @@
     android:orientation="vertical"
     tools:context=".ScreeningSeatMapFragment">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout android:orientation="vertical"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="30dp"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/seat_map_screen"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:gravity="center"
+                android:background="@color/colorAccent"
+                android:text="@string/screen"
+                android:layout_marginEnd="30dp"
+                android:layout_marginStart="30dp" />
+
+            <ScrollView
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent">
+
+                <TableLayout
+                    android:id="@+id/seat_map_table"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layoutDirection="ltr"
+                    android:stretchColumns="*"
+                    android:shrinkColumns="*" />
+
+            </ScrollView>
+
+
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/seat_map_colors"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="8dp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/unoccupied"
+                android:layout_marginEnd="8dp" />
+
+            <View
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:background="#ffcccccc"
+                android:layout_gravity="center_vertical"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/occupied"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="16dp" />
+
+            <View
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:background="#ff888888"
+                android:layout_gravity="center_vertical"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/handicap"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp" />
+
+            <View
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:background="#2196f3"
+                android:layout_gravity="center_vertical"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
     <WebView
         android:id="@+id/seat_map_web_view"
         android:layout_width="match_parent"

@@ -35,6 +35,18 @@ public class SeatMap {
         }
     }
 
+    public int getRows() {
+        return rows;
+    }
+
+    public int getCols() {
+        return cols;
+    }
+
+    public Seat getSeat(int row, int col){
+        return map[row][col];
+    }
+
     private void getMapDimensions(Elements seats) {
         rows = 0;
         cols = 0;
@@ -81,5 +93,14 @@ public class SeatMap {
                 Log.e(LOG_TAG, "Bad seat status");
         }
         return null;
+    }
+
+    public boolean isRowEmpty(int row){
+        for(Seat seat : map[row]){
+            if(seat != null){
+                return false;
+            }
+        }
+        return true;
     }
 }
