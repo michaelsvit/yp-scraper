@@ -53,8 +53,9 @@ public class MovieScreeningsFragment extends Fragment {
     private int monthPicked;
     private int yearPicked;
 
-    // Max date for picker
-    private String maxDate;
+    // Max and min date for picker
+    private Date maxDate;
+    private Date minDate;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -121,40 +122,39 @@ public class MovieScreeningsFragment extends Fragment {
                 }
             }, yearPicked, monthPicked, dayPicked);
             DatePicker datePicker = datePickerDialog.getDatePicker();
-            datePicker.setMinDate(System.currentTimeMillis() - 1000);
-            datePicker.setMaxDate(getMaxDate());
+            getMaxAndMinDate();
+            datePicker.setMinDate(minDate.getTime());
+            datePicker.setMaxDate(maxDate.getTime());
             datePickerDialog.show();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private long getMaxDate() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy");
-        Date date = null;
-        try {
-            if (maxDate != null) {
-                date = dateFormat.parse(maxDate);
-            } else {
-                maxDate = getMaxDateFromSchedule();
-                date = dateFormat.parse(maxDate);
+    private void getMaxAndMinDate() {
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy");
+        List<String> dates = new ArrayList<>(schedule.keySet());
+        sortListByDate(dates, dateFormat);
+        if (maxDate == null) {
+            try {
+                maxDate = dateFormat.parse(dates.get(dates.size()-1));
+            } catch (ParseException e) {
+                e.printStackTrace();
+                Log.e(LOG_TAG, "Error parsing maxDate");
             }
-        } catch (ParseException e) {
-            e.printStackTrace();
-            Log.e(LOG_TAG, "Cannot parse date");
         }
-        if (date != null) {
-            return date.getTime();
-        } else {
-            return 0;
+        if (minDate == null) {
+            try {
+                minDate = dateFormat.parse(dates.get(0));
+            } catch (ParseException e) {
+                e.printStackTrace();
+                Log.e(LOG_TAG, "Error parsing minDate");
+            }
         }
     }
 
-    private String getMaxDateFromSchedule() {
-        final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy");
-        List<String> dates = new ArrayList<>(schedule.keySet());
-
-        String maxDate = Collections.max(dates, new Comparator<String>() {
+    private void sortListByDate(List<String> dates, final SimpleDateFormat dateFormat) {
+        Collections.sort(dates, new Comparator<String>() {
             @Override
             public int compare(String dateString0, String dateString1) {
                 Date date0 = null;
@@ -173,8 +173,6 @@ public class MovieScreeningsFragment extends Fragment {
                 }
             }
         });
-
-        return maxDate;
     }
 
     private void setToolbarTitle(int day, int month, int year) {
