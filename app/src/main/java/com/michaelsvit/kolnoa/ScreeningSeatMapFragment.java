@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -27,7 +28,9 @@ public class ScreeningSeatMapFragment extends Fragment {
 
     private Context context;
     private WebView webView;
+    private RelativeLayout containerLayout;
     private TableLayout tableLayout;
+    private TextView emptyMapText;
 
     private SeatMap seatMap;
 
@@ -47,7 +50,9 @@ public class ScreeningSeatMapFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_seat_map, container, false);
         context = rootView.getContext();
+        containerLayout = (RelativeLayout) rootView.findViewById(R.id.seat_map_container);
         tableLayout = (TableLayout) rootView.findViewById(R.id.seat_map_table);
+        emptyMapText = (TextView) rootView.findViewById(R.id.seat_map_empty_text);
 
         initWebView(rootView);
         fetchData();
@@ -128,6 +133,17 @@ public class ScreeningSeatMapFragment extends Fragment {
                     }
                 });
             }
+
+            @JavascriptInterface
+            public void errorOccurred(){
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        containerLayout.setVisibility(View.GONE);
+                        emptyMapText.setVisibility(View.VISIBLE);
+                    }
+                });
+            }
         }
 
         webView = (WebView) rootView.findViewById(R.id.seat_map_web_view);
@@ -139,6 +155,8 @@ public class ScreeningSeatMapFragment extends Fragment {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
+                checkForError();
+
                 if (firstPage) {
                     simulateTicketNumberSelection(webView);
                     simulateButtonPress(webView);
@@ -147,6 +165,11 @@ public class ScreeningSeatMapFragment extends Fragment {
                     webView.loadUrl("javascript:window.Android.processHTML("
                             + "document.getElementsByTagName('html')[0].innerHTML);");
                 }
+            }
+
+            private void checkForError() {
+                final String errorTableId = "ctl00_CPH1_SystemErrorControl1_Table1";
+                webView.loadUrl("javascript:if (document.getElementById('" + errorTableId + "') !== null) window.Android.errorOccurred();");
             }
 
             private void simulateTicketNumberSelection(WebView webView) {

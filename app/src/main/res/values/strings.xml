@@ -53,4 +53,5 @@
     <string name="occupied">תפוס</string>
     <string name="handicap">נכים</string>
     <string name="hall_map">מפת האולם</string>
+    <string name="no_available_seats">לא קיימים כיסאות זמינים דרך האינטרנט להקרנה זו, אנא בחר הקרנה אחרת</string>
 </resources>
