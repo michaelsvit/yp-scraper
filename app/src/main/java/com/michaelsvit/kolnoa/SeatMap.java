@@ -1,5 +1,7 @@
 package com.michaelsvit.kolnoa;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import org.jsoup.Jsoup;
@@ -10,7 +12,8 @@ import org.jsoup.select.Elements;
 /**
  * Created by Michael on 9/10/2016.
  */
-public class SeatMap {
+public class SeatMap implements Parcelable {
+    public static final String ARG_NAME = "seat_map";
     private static final String LOG_TAG = SeatMap.class.getSimpleName();
 
     private Seat[][] map;
@@ -34,6 +37,29 @@ public class SeatMap {
             map[seat.getRow()][seat.getColumn()] = seat;
         }
     }
+
+    protected SeatMap(Parcel in) {
+        rows = in.readInt();
+        cols = in.readInt();
+        map = new Seat[rows][cols];
+        for(int row = 0; row < rows; row++){
+            for(int col = 0; col < cols; col++) {
+                map[row][col] = in.readParcelable(Seat.class.getClassLoader());
+            }
+        }
+    }
+
+    public static final Creator<SeatMap> CREATOR = new Creator<SeatMap>() {
+        @Override
+        public SeatMap createFromParcel(Parcel in) {
+            return new SeatMap(in);
+        }
+
+        @Override
+        public SeatMap[] newArray(int size) {
+            return new SeatMap[size];
+        }
+    };
 
     public int getRows() {
         return rows;
@@ -102,5 +128,21 @@ public class SeatMap {
             }
         }
         return true;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(rows);
+        parcel.writeInt(cols);
+        for(int row = 0; row < rows; row++){
+            for(int col = 0; col < cols; col++){
+                parcel.writeParcelable(map[row][col], 0);
+            }
+        }
     }
 }
