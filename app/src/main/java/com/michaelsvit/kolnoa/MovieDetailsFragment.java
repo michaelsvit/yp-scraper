@@ -4,8 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +23,7 @@ import java.util.List;
 
 public class MovieDetailsFragment extends Fragment {
     private static final String LOG_TAG = MovieDetailsFragment.class.getSimpleName();
+    public static final String FRAGMENT_ARG_NAME = "movie_details_fragment";
 
     private Context context;
     private Movie movie;
@@ -35,37 +36,69 @@ public class MovieDetailsFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static MovieDetailsFragment newInstance() {
+    public static MovieDetailsFragment newInstance(Movie movie, List<Site> sites, MovieSchedule schedule) {
         MovieDetailsFragment fragment = new MovieDetailsFragment();
+
+        Bundle args = new Bundle();
+        args.putParcelable(Movie.ARG_NAME, movie);
+        args.putParcelableArrayList(Cinema.SITES_ARG_NAME, (ArrayList<Site>) sites);
+        args.putParcelable(Cinema.SCHEDULE_ARG_NAME, schedule);
+        fragment.setArguments(args);
+
         return fragment;
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof MovieDetailsActivity) {
-            MovieDetailsActivity activity = (MovieDetailsActivity) context;
-            this.movie = activity.getMovie();
-            this.sites = activity.getSites();
-            this.schedule = activity.getSchedule();
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (savedInstanceState == null) {
+            getDataFromArguments();
         } else {
-            Log.d(LOG_TAG, "Attached to activity different from MovieDetailsActivity");
+            getDataFromSavedState(savedInstanceState);
         }
-        this.context = context;
+    }
+
+    private void getDataFromArguments() {
+        Bundle args = getArguments();
+        movie = args.getParcelable(Movie.ARG_NAME);
+        sites = args.getParcelableArrayList(Cinema.SITES_ARG_NAME);
+        schedule = args.getParcelable(Cinema.SCHEDULE_ARG_NAME);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelable(Movie.ARG_NAME, movie);
+        outState.putParcelableArrayList(Cinema.SITES_ARG_NAME, (ArrayList<Site>) sites);
+        outState.putParcelable(Cinema.SCHEDULE_ARG_NAME, schedule);
+    }
+
+    private void getDataFromSavedState(Bundle savedInstanceState) {
+        movie = savedInstanceState.getParcelable(Movie.ARG_NAME);
+        sites = savedInstanceState.getParcelableArrayList(Cinema.SITES_ARG_NAME);
+        schedule = savedInstanceState.getParcelable(Cinema.SCHEDULE_ARG_NAME);
     }
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        // Inflate the layout for this detailsFragment
         final View rootView = inflater.inflate(R.layout.fragment_movie_details, container, false);
+        context = getActivity();
 
         spinner = (Spinner) rootView.findViewById(R.id.sites_spinner);
         ArrayAdapter<Site> spinnerAdapter = new ArrayAdapter<>(context, R.layout.sites_spinner_item, sites);
         spinner.setAdapter(spinnerAdapter);
 
         populateDetails(rootView);
+        addButtonListeners(rootView);
 
+        return rootView;
+    }
+
+    private void addButtonListeners(View rootView) {
         Button screeningsButton = (Button) rootView.findViewById(R.id.details_screening_button);
         screeningsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,8 +138,6 @@ public class MovieDetailsFragment extends Fragment {
                 }
             }
         });
-
-        return rootView;
     }
 
     private void makeToast(int textResourceID) {

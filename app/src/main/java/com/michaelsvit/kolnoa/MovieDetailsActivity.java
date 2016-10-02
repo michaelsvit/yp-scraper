@@ -18,6 +18,8 @@ import java.util.Locale;
 public class MovieDetailsActivity extends AppCompatActivity {
     private static final String LOG_TAG = MovieDetailsActivity.class.getSimpleName();
 
+    MovieDetailsFragment detailsFragment;
+
     private Movie movie;
     private List<Site> sites;
     private MovieSchedule schedule;
@@ -26,15 +28,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Set locale to correspond to Hebrew
-        Configuration configuration = getResources().getConfiguration();
-        configuration.setLayoutDirection(new Locale("he"));
-        getResources().updateConfiguration(configuration, getResources().getDisplayMetrics());
-
-        final Intent intent = getIntent();
-        movie = intent.getParcelableExtra(Movie.ARG_NAME);
-        sites = intent.getParcelableArrayListExtra(Cinema.SITES_ARG_NAME);
-        schedule = intent.getParcelableExtra(Cinema.SCHEDULE_ARG_NAME);
+        setLayoutRTL();
+        getDataFromIntent(savedInstanceState != null);
 
         setContentView(R.layout.activity_movie_details);
         CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
@@ -55,25 +50,37 @@ public class MovieDetailsActivity extends AppCompatActivity {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        if(savedInstanceState == null){
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            MovieDetailsFragment fragment = MovieDetailsFragment.newInstance();
-            fragmentManager
-                    .beginTransaction()
-                    .add(R.id.movie_details_fragment_container, fragment)
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (savedInstanceState == null) {
+            detailsFragment = MovieDetailsFragment.newInstance(movie, sites, schedule);
+            fragmentManager.beginTransaction()
+                    .add(R.id.movie_details_fragment_container, detailsFragment)
                     .commit();
+        } else {
+            detailsFragment = (MovieDetailsFragment) fragmentManager.getFragment(savedInstanceState, MovieDetailsFragment.FRAGMENT_ARG_NAME);
         }
     }
 
-    public List<Site> getSites() {
-        return sites;
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        getSupportFragmentManager().putFragment(outState, MovieDetailsFragment.FRAGMENT_ARG_NAME, detailsFragment);
     }
 
-    public MovieSchedule getSchedule() {
-        return schedule;
+    private void setLayoutRTL() {
+        // Set locale to correspond to Hebrew
+        Configuration configuration = getResources().getConfiguration();
+        configuration.setLayoutDirection(new Locale("he"));
+        getResources().updateConfiguration(configuration, getResources().getDisplayMetrics());
     }
 
-    public Movie getMovie() {
-        return movie;
+    private void getDataFromIntent(boolean restoringState) {
+        final Intent intent = getIntent();
+        movie = intent.getParcelableExtra(Movie.ARG_NAME);
+        if (!restoringState) {
+            sites = intent.getParcelableArrayListExtra(Cinema.SITES_ARG_NAME);
+            schedule = intent.getParcelableExtra(Cinema.SCHEDULE_ARG_NAME);
+        }
     }
 }
