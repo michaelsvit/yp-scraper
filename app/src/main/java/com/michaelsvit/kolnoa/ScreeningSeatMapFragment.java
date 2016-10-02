@@ -21,6 +21,7 @@ import android.widget.TextView;
  * A placeholder fragment containing a simple view.
  */
 public class ScreeningSeatMapFragment extends Fragment {
+    public static final String FRAGMENT_ARG_NAME = "seat_map_fragment";
     private static final String LOG_TAG = ScreeningSeatMapFragment.class.getSimpleName();
 
     private String screeningId;
@@ -46,6 +47,14 @@ public class ScreeningSeatMapFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (seatMap != null) {
+            outState.putParcelable(SeatMap.ARG_NAME, seatMap);
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_seat_map, container, false);
@@ -54,8 +63,13 @@ public class ScreeningSeatMapFragment extends Fragment {
         tableLayout = (TableLayout) rootView.findViewById(R.id.seat_map_table);
         emptyMapText = (TextView) rootView.findViewById(R.id.seat_map_empty_text);
 
-        initWebView(rootView);
-        fetchData();
+        if (savedInstanceState == null) {
+            initWebView(rootView);
+            fetchData();
+        } else {
+            seatMap = savedInstanceState.getParcelable(SeatMap.ARG_NAME);
+            displaySeatMap();
+        }
 
         return rootView;
     }

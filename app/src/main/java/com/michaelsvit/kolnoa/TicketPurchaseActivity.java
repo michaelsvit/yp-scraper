@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import java.util.Locale;
 
 public class TicketPurchaseActivity extends AppCompatActivity {
+    Fragment seatMapFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,19 +33,33 @@ public class TicketPurchaseActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        if(savedInstanceState == null){
-            Fragment fragment = new ScreeningSeatMapFragment();
+        if (savedInstanceState == null) {
+            seatMapFragment = new ScreeningSeatMapFragment();
 
             Bundle args = new Bundle();
             args.putString(MovieScreening.ARG_NAME, screeningId);
             args.putString(Site.TICKETS_URL_ARG_NAME, siteTicketsUrl);
-            fragment.setArguments(args);
+            seatMapFragment.setArguments(args);
 
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
-                    .add(R.id.ticket_fragment_container, fragment)
+                    .add(R.id.ticket_fragment_container, seatMapFragment)
                     .commit();
+        } else {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            seatMapFragment = fragmentManager.getFragment(
+                    savedInstanceState,
+                    ScreeningSeatMapFragment.FRAGMENT_ARG_NAME);
         }
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        getSupportFragmentManager().putFragment(
+                outState,
+                ScreeningSeatMapFragment.FRAGMENT_ARG_NAME,
+                seatMapFragment);
+    }
 }
