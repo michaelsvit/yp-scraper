@@ -33,6 +33,7 @@
             android:name=".MovieScreeningsActivity"
             android:label="@string/title_activity_movie_screenings"
             android:launchMode="singleTop"
+            android:screenOrientation="portrait"
             android:parentActivityName=".MovieDetailsActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <meta-data
