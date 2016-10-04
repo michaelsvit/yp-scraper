@@ -16,15 +16,13 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setLayoutRTL();
 
-        // Set locale to correspond to Hebrew
-        Configuration configuration = getResources().getConfiguration();
-        configuration.setLayoutDirection(new Locale("he"));
-        getResources().updateConfiguration(configuration, getResources().getDisplayMetrics());
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -40,10 +38,20 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         // TODO: move this to drawer logic
-        FragmentManager manager = getSupportFragmentManager();
-        manager.beginTransaction()
-                .add(R.id.main_container ,MovieGridFragment.newInstance(Cinema.CinemaName.YES_PLANET))
-                .commit();
+        if (savedInstanceState == null) {
+            FragmentManager manager = getSupportFragmentManager();
+            MovieGridFragment movieGridFragment = MovieGridFragment.newInstance(Cinema.CinemaName.YES_PLANET);
+            manager.beginTransaction()
+                    .add(R.id.main_container, movieGridFragment)
+                    .commit();
+        }
+    }
+
+    private void setLayoutRTL() {
+        // Set locale to correspond to Hebrew
+        Configuration configuration = getResources().getConfiguration();
+        configuration.setLayoutDirection(new Locale("he"));
+        getResources().updateConfiguration(configuration, getResources().getDisplayMetrics());
     }
 
     @Override
