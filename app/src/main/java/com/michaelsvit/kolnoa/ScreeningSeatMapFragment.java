@@ -164,39 +164,29 @@ public class ScreeningSeatMapFragment extends Fragment {
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(new JSInterface(), "Android");
         webView.setWebViewClient(new WebViewClient(){
-            boolean firstPage = true;
-
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                checkForError();
 
-                if (firstPage) {
-                    simulateTicketNumberSelection(webView);
-                    simulateButtonPress(webView);
-                    firstPage = false;
-                } else {
-                    webView.loadUrl("javascript:window.Android.processHTML("
-                            + "document.getElementsByTagName('html')[0].innerHTML);");
-                }
-            }
-
-            private void checkForError() {
                 final String errorTableId = "ctl00_CPH1_SystemErrorControl1_Table1";
-                webView.loadUrl("javascript:if (document.getElementById('" + errorTableId + "') !== null) window.Android.errorOccurred();");
-            }
+                final String selectionBoxId = "ctl00_CPH1_SelectTicketControl1_rptTicketSelectionGrid_ctl00_TicketsSelection_ctl02_ddQunatity_0";
+                int ticketCount = 1;
+                final String buttonId = "ctl00_CPH1_lbNext1";
+                final String seatPlanContainerClass = "SeatPlanContainer";
 
-            private void simulateTicketNumberSelection(WebView webView) {
-                String selectionBoxId = "ctl00_CPH1_SelectTicketControl1_rptTicketSelectionGrid_ctl00_TicketsSelection_ctl02_ddQunatity_0";
-                int ticketNumber = 1;
-                webView.loadUrl("javascript:document.getElementById('"
-                        + selectionBoxId + "').value = "
-                        + String.valueOf(ticketNumber));
-            }
+                final String seatSelectionPage = "document.getElementsByClassName('" + seatPlanContainerClass + "').length > 0";
+                final String errorOccurred = "document.getElementById('" + errorTableId + "') !== null";
+                final String simulateTicketCountSelection = "document.getElementById('" + selectionBoxId + "').value = " + String.valueOf(ticketCount) + ";";
+                final String simulateButtonPress = "document.getElementById('" + buttonId + "').click();";
+                final String extractHtml = "window.Android.processHTML(document.getElementsByTagName('html')[0].innerHTML);";
 
-            private void simulateButtonPress(WebView webView) {
-                String buttonId = "ctl00_CPH1_lbNext1";
-                webView.loadUrl("javascript:document.getElementById('" + buttonId + "').click()");
+                webView.loadUrl("javascript:if (" + seatSelectionPage + "){" +
+                        extractHtml +
+                        "} else if(!" + errorOccurred + "){" +
+                        simulateTicketCountSelection +
+                        simulateButtonPress +
+                        "} else {" +
+                        errorOccurred + "}");
             }
         });
     }
