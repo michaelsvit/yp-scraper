@@ -108,7 +108,7 @@ public class MovieDetailsFragment extends Fragment {
                     Site selectedSite = (Site) spinner.getSelectedItem();
                     int siteId = selectedSite.getId();
                     ArrayList<MovieScreening> movieSchedule = (ArrayList<MovieScreening>) schedule.getMovieScheduleInSite(siteId);
-                    if (movieSchedule != null) {
+                    if (movieSchedule.size() > 0) {
                         intent.putParcelableArrayListExtra(Cinema.SCHEDULE_ARG_NAME, movieSchedule);
                         intent.putExtra(Site.SITE_ARG_NAME, selectedSite);
                         startActivity(intent);
@@ -141,9 +141,7 @@ public class MovieDetailsFragment extends Fragment {
     }
 
     private void makeToast(int textResourceID) {
-        Toast toast = new Toast(context);
-        toast.setText(textResourceID);
-        toast.setDuration(Toast.LENGTH_SHORT);
+        Toast toast = Toast.makeText(context, textResourceID, Toast.LENGTH_LONG);
         toast.show();
     }
 
