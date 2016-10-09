@@ -3,7 +3,6 @@ package com.michaelsvit.kolnoa;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +13,7 @@ import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 
 /**
  * A fragment representing a list of Items.
@@ -29,6 +29,7 @@ public class MovieGridFragment extends Fragment {
 
     private String moviesHTMLResponse;
     private WebView webView;
+    private ProgressBar progressBar;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -65,13 +66,16 @@ public class MovieGridFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_movies_grid, container, false);
 
         Context context = rootView.getContext();
+        progressBar = (ProgressBar) rootView.findViewById(R.id.fragment_movies_progress_bar);
+        webView = (WebView) rootView.findViewById(R.id.fragment_movies_web_view);
+
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.fragment_movies_recycler_view);
         recyclerView.setLayoutManager(new GridLayoutManager(context, columnCount));
         adapter = new MovieRecyclerViewAdapter(context, cinema);
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
 
-        initWebView(rootView);
+        initWebView();
         fetchData();
 
         return rootView;
@@ -81,8 +85,7 @@ public class MovieGridFragment extends Fragment {
         webView.loadUrl(cinema.getMoviesUrl());
     }
 
-    @NonNull
-    private void initWebView(View view) {
+    private void initWebView() {
         class JSInterface{
             @JavascriptInterface
             public void saveMoviesHTML(String moviesHTML){
@@ -104,7 +107,7 @@ public class MovieGridFragment extends Fragment {
                 }
             }
         }
-        webView = (WebView) view.findViewById(R.id.fragment_movies_web_view);
+
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(new JSInterface(), "Android");
         webView.setWebViewClient(new WebViewClient(){
@@ -126,6 +129,12 @@ public class MovieGridFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Void blank) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    progressBar.setVisibility(View.GONE);
+                }
+            });
             adapter.notifyDataSetChanged();
         }
 
