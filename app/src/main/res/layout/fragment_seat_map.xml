@@ -1,14 +1,33 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".ScreeningSeatMapFragment">
+
+    <WebView
+        android:id="@+id/seat_map_web_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorBackground"/>
+
+    <TextView android:id="@+id/seat_map_empty_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:text="@string/no_available_seats"
+        android:textColor="@color/textColorPrimary"
+        android:textSize="24sp"
+        android:visibility="gone"/>
 
     <RelativeLayout
         android:id="@+id/seat_map_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="gone">
 
         <LinearLayout android:orientation="vertical"
             android:layout_height="match_parent"
@@ -98,18 +117,9 @@
 
     </RelativeLayout>
 
-    <TextView android:id="@+id/seat_map_empty_text"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:text="@string/no_available_seats"
-        android:textColor="@color/textColorPrimary"
-        android:textSize="24sp"
-        android:visibility="gone"/>
+    <ProgressBar android:id="@+id/seat_map_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
 
-    <WebView
-        android:id="@+id/seat_map_web_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-</LinearLayout>
+</FrameLayout>

@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -32,6 +33,7 @@ public class ScreeningSeatMapFragment extends Fragment {
     private RelativeLayout containerLayout;
     private TableLayout tableLayout;
     private TextView emptyMapText;
+    private ProgressBar progressBar;
 
     private SeatMap seatMap;
 
@@ -62,6 +64,7 @@ public class ScreeningSeatMapFragment extends Fragment {
         containerLayout = (RelativeLayout) rootView.findViewById(R.id.seat_map_container);
         tableLayout = (TableLayout) rootView.findViewById(R.id.seat_map_table);
         emptyMapText = (TextView) rootView.findViewById(R.id.seat_map_empty_text);
+        progressBar = (ProgressBar) rootView.findViewById(R.id.seat_map_progress_bar);
 
         if (savedInstanceState == null) {
             initWebView(rootView);
@@ -121,6 +124,10 @@ public class ScreeningSeatMapFragment extends Fragment {
 
             tableLayout.addView(tableRow);
         }
+
+        // Hide progress bar and display table
+        progressBar.setVisibility(View.GONE);
+        containerLayout.setVisibility(View.VISIBLE);
     }
 
     private TextView createRowNumText(int rowNumber) {
@@ -153,7 +160,7 @@ public class ScreeningSeatMapFragment extends Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        containerLayout.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
                         emptyMapText.setVisibility(View.VISIBLE);
                     }
                 });
@@ -168,25 +175,27 @@ public class ScreeningSeatMapFragment extends Fragment {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
 
-                final String errorTableId = "ctl00_CPH1_SystemErrorControl1_Table1";
+                final String formId = "aspnetForm";
+                final String errorFormName = "SystemErrorPage";
+                final String ticketSelectionFormName = "SelectTicketsPage";
+                final String seatSelectionFormName = "SelectSeatPage";
                 final String selectionBoxId = "ctl00_CPH1_SelectTicketControl1_rptTicketSelectionGrid_ctl00_TicketsSelection_ctl02_ddQunatity_0";
                 int ticketCount = 1;
                 final String buttonId = "ctl00_CPH1_lbNext1";
-                final String seatPlanContainerClass = "SeatPlanContainer";
 
-                final String seatSelectionPage = "document.getElementsByClassName('" + seatPlanContainerClass + "').length > 0";
-                final String errorOccurred = "document.getElementById('" + errorTableId + "') !== null";
                 final String simulateTicketCountSelection = "document.getElementById('" + selectionBoxId + "').value = " + String.valueOf(ticketCount) + ";";
                 final String simulateButtonPress = "document.getElementById('" + buttonId + "').click();";
                 final String extractHtml = "window.Android.processHTML(document.getElementsByTagName('html')[0].innerHTML);";
 
-                webView.loadUrl("javascript:if (" + seatSelectionPage + "){" +
-                        extractHtml +
-                        "} else if(!" + errorOccurred + "){" +
+                webView.loadUrl("javascript:var formName = document.getElementById('" + formId + "').getAttribute('action');" +
+                        "if (formName.includes('" + errorFormName + "')){" +
+                        "window.Android.errorOccurred();" +
+                        "} else if (formName.includes('" + ticketSelectionFormName + "')){" +
                         simulateTicketCountSelection +
                         simulateButtonPress +
-                        "} else {" +
-                        errorOccurred + "}");
+                        "} else if (formName.includes('" + seatSelectionFormName + "')) {" +
+                        extractHtml +
+                        "}");
             }
         });
     }
