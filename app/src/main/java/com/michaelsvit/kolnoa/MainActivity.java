@@ -1,6 +1,7 @@
 package com.michaelsvit.kolnoa;
 
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
@@ -9,14 +10,28 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
+
+    MovieGridFragment movieGridFragment;
+
+    private ProgressBar progressBar;
+
+    private Cinema cinema;
+    private String moviesHTMLResponse;
+    private WebView webView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,10 +52,18 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        cinema = new YesPlanet();
+
+        progressBar = (ProgressBar) findViewById(R.id.fragment_movies_progress_bar);
+        webView = (WebView) findViewById(R.id.fragment_movies_web_view);
+
+        initWebView();
+        fetchData();
+
         // TODO: move this to drawer logic
         if (savedInstanceState == null) {
             FragmentManager manager = getSupportFragmentManager();
-            MovieGridFragment movieGridFragment = MovieGridFragment.newInstance(Cinema.CinemaName.YES_PLANET);
+            movieGridFragment = MovieGridFragment.newInstance(cinema);
             manager.beginTransaction()
                     .add(R.id.main_container, movieGridFragment)
                     .commit();
@@ -108,5 +131,75 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void fetchData() {
+        webView.loadUrl(cinema.getMoviesUrl());
+    }
+
+    private void initWebView() {
+        class JSInterface{
+            @JavascriptInterface
+            public void saveMoviesHTML(String moviesHTML){
+                if(moviesHTML.length() > 10000){
+                    moviesHTMLResponse = moviesHTML;
+                    webView.post(new Runnable(){
+                        @Override
+                        public void run() {
+                            webView.loadUrl(cinema.getScheduleUrl());
+                        }
+                    });
+                }
+            }
+
+            @JavascriptInterface
+            public void processHTML(String scheduleJSONResponse){
+                if(scheduleJSONResponse.length() > 10000){
+                    new ParseResponse().execute(moviesHTMLResponse, scheduleJSONResponse);
+                }
+            }
+        }
+
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.addJavascriptInterface(new JSInterface(), "Android");
+        webView.setWebViewClient(new WebViewClient(){
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                if (moviesHTMLResponse == null) {
+                    webView.loadUrl("javascript:window.Android.saveMoviesHTML("
+                            + "'<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');");
+                } else {
+                    webView.loadUrl("javascript:window.Android.processHTML(document.getElementsByTagName('html')[0].innerText);");
+                }
+            }
+        });
+    }
+
+    private class ParseResponse extends AsyncTask<String, Void, Void> {
+        private final String LOG_TAG = ParseResponse.class.getSimpleName();
+
+        @Override
+        protected void onPostExecute(Void blank) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    progressBar.setVisibility(View.GONE);
+                }
+            });
+            movieGridFragment.notifyDatasetChanged();
+        }
+
+        @Override
+        protected Void doInBackground(String... params) {
+            if(params.length > 1) {
+                cinema.updateMovies(params[0]);
+                cinema.updateSchedule(params[1]);
+                return null;
+            } else {
+                Log.e(LOG_TAG, "Error parsing response.");
+                return null;
+            }
+        }
     }
 }
