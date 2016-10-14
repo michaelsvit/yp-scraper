@@ -14,8 +14,8 @@ import android.view.ViewGroup;
  */
 public class MovieGridFragment extends Fragment {
 
+    public static final String FRAGMENT_ARG_NAME = "movie_grid_fragment";
     private static final String LOG_TAG = MovieGridFragment.class.getSimpleName();
-    private static final String ARG_CINEMA = "cinema";
     private static final int columnCount = 2;
 
     private Cinema cinema;
@@ -50,7 +50,7 @@ public class MovieGridFragment extends Fragment {
         return rootView;
     }
 
-    public void notifyDatasetChanged() {
+    public void notifyDataSetChanged() {
         adapter.notifyDataSetChanged();
     }
 

@@ -25,7 +25,8 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
-    MovieGridFragment movieGridFragment;
+    private MovieGridFragment movieGridFragment;
+    private CinemaRetainFragment cinemaFragment;
 
     private ProgressBar progressBar;
 
@@ -52,22 +53,41 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        cinema = new YesPlanet();
-
         progressBar = (ProgressBar) findViewById(R.id.fragment_movies_progress_bar);
         webView = (WebView) findViewById(R.id.fragment_movies_web_view);
 
-        initWebView();
-        fetchData();
+        FragmentManager manager = getSupportFragmentManager();
+        cinemaFragment = (CinemaRetainFragment) manager.findFragmentByTag(CinemaRetainFragment.FRAGMENT_ARG_NAME);
+        if (cinemaFragment == null) {
+            cinemaFragment = new CinemaRetainFragment();
+            manager.beginTransaction().add(cinemaFragment, CinemaRetainFragment.FRAGMENT_ARG_NAME).commit();
+            cinema = new YesPlanet();
+            cinemaFragment.setCinema(cinema);
+        } else {
+            cinema = cinemaFragment.getCinema();
+        }
 
         // TODO: move this to drawer logic
         if (savedInstanceState == null) {
-            FragmentManager manager = getSupportFragmentManager();
+            initWebView();
+            fetchData();
+
             movieGridFragment = MovieGridFragment.newInstance(cinema);
             manager.beginTransaction()
                     .add(R.id.main_container, movieGridFragment)
                     .commit();
+        } else {
+            movieGridFragment = (MovieGridFragment) manager.getFragment(savedInstanceState, MovieGridFragment.FRAGMENT_ARG_NAME);
+            movieGridFragment.setCinema(cinema);
+            hideProgressBar();
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        FragmentManager manager = getSupportFragmentManager();
+        manager.putFragment(outState, MovieGridFragment.FRAGMENT_ARG_NAME, movieGridFragment);
     }
 
     private void setLayoutRTL() {
@@ -184,10 +204,10 @@ public class MainActivity extends AppCompatActivity
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    progressBar.setVisibility(View.GONE);
+                    hideProgressBar();
                 }
             });
-            movieGridFragment.notifyDatasetChanged();
+            movieGridFragment.notifyDataSetChanged();
         }
 
         @Override
@@ -201,5 +221,9 @@ public class MainActivity extends AppCompatActivity
                 return null;
             }
         }
+    }
+
+    private void hideProgressBar() {
+        progressBar.setVisibility(View.GONE);
     }
 }
