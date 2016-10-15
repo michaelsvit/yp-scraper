@@ -1,6 +1,7 @@
 package com.michaelsvit.kolnoa;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -16,7 +17,6 @@ public class MovieGridFragment extends Fragment {
 
     public static final String FRAGMENT_ARG_NAME = "movie_grid_fragment";
     private static final String LOG_TAG = MovieGridFragment.class.getSimpleName();
-    private static final int columnCount = 2;
 
     private Cinema cinema;
     private MovieRecyclerViewAdapter adapter;
@@ -40,14 +40,27 @@ public class MovieGridFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_movies_grid, container, false);
 
         Context context = rootView.getContext();
+        int columns = getColumns();
+        setupRecyclerView(rootView, context, columns);
 
+        return rootView;
+    }
+
+    private int getColumns() {
+        int orientation = getActivity().getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            return 2;
+        } else {
+            return 3;
+        }
+    }
+
+    private void setupRecyclerView(View rootView, Context context, int columns) {
         RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.fragment_movies_recycler_view);
-        recyclerView.setLayoutManager(new GridLayoutManager(context, columnCount));
+        recyclerView.setLayoutManager(new GridLayoutManager(context, columns));
         adapter = new MovieRecyclerViewAdapter(context, cinema);
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
-
-        return rootView;
     }
 
     public void notifyDataSetChanged() {
