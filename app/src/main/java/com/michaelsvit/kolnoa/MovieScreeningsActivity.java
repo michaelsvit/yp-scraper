@@ -17,8 +17,8 @@ import java.util.Locale;
 import java.util.Map;
 
 public class MovieScreeningsActivity extends AppCompatActivity {
-    private Map<String, List<MovieScreening>> schedule;
-    private Site site;
+    private ScheduleDataFragment dataFragment;
+    private MovieScreeningsFragment screeningsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,11 +28,6 @@ public class MovieScreeningsActivity extends AppCompatActivity {
         Configuration configuration = getResources().getConfiguration();
         configuration.setLayoutDirection(new Locale("he"));
         getResources().updateConfiguration(configuration, getResources().getDisplayMetrics());
-
-        Intent intent = getIntent();
-        final List<MovieScreening> list = intent.getParcelableArrayListExtra(Cinema.SCHEDULE_ARG_NAME);
-        schedule = splitToDays(list);
-        site = intent.getParcelableExtra(Site.SITE_ARG_NAME);
 
         setContentView(R.layout.activity_movie_screenings);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -44,17 +39,44 @@ public class MovieScreeningsActivity extends AppCompatActivity {
             supportActionBar.setDisplayShowTitleEnabled(false);
         }
 
-        if(savedInstanceState == null){
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            MovieScreeningsFragment fragment = MovieScreeningsFragment.newInstance(site);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        dataFragment = (ScheduleDataFragment) fragmentManager.findFragmentByTag(ScheduleDataFragment.FRAGMENT_ARG_NAME);
+        if (dataFragment == null) {
+            dataFragment = new ScheduleDataFragment();
+            fragmentManager.beginTransaction()
+                    .add(dataFragment, ScheduleDataFragment.FRAGMENT_ARG_NAME)
+                    .commit();
+            Intent intent = getIntent();
+            final List<MovieScreening> list = intent.getParcelableArrayListExtra(Cinema.SCHEDULE_ARG_NAME);
+            dataFragment.setSchedule(splitToDays(list));
+            dataFragment.setSite((Site) intent.getParcelableExtra(Site.SITE_ARG_NAME));
+        }
+        
+        if (savedInstanceState == null) {
+            screeningsFragment = MovieScreeningsFragment.newInstance(dataFragment.getSite(), dataFragment.getSchedule());
             fragmentManager
                     .beginTransaction()
-                    .add(R.id.movie_screenings_fragment_container, fragment)
+                    .add(R.id.movie_screenings_fragment_container, screeningsFragment)
                     .commit();
+        } else {
+            screeningsFragment = (MovieScreeningsFragment) fragmentManager
+                    .getFragment(savedInstanceState, MovieScreeningsFragment.FRAGMENT_ARG_NAME);
+            screeningsFragment.setSite(dataFragment.getSite());
+            screeningsFragment.setSchedule(dataFragment.getSchedule());
         }
     }
 
-    private Map<String, List<MovieScreening>> splitToDays(List<MovieScreening> list) {
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        getSupportFragmentManager().putFragment(
+                outState,
+                MovieScreeningsFragment.FRAGMENT_ARG_NAME,
+                screeningsFragment
+        );
+    }
+
+    private MovieScheduleInSite splitToDays(List<MovieScreening> list) {
         Map<String, List<MovieScreening>> splitList = new HashMap<>();
         Collections.sort(list, new Comparator<MovieScreening>() {
             @Override
@@ -82,10 +104,6 @@ public class MovieScreeningsActivity extends AppCompatActivity {
             }
         }
 
-        return splitList;
-    }
-
-    public Map<String, List<MovieScreening>> getSchedule() {
-        return schedule;
+        return new MovieScheduleInSite(splitList);
     }
 }

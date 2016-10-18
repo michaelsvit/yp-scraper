@@ -28,15 +28,15 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.TimeZone;
 
 public class MovieScreeningsFragment extends Fragment {
+    public static final String FRAGMENT_ARG_NAME = "movie_screenings_fragment";
     private static final String LOG_TAG = MovieScreeningsFragment.class.getSimpleName();
 
     private Context context;
     private Site site;
-    private Map<String, List<MovieScreening>> schedule;
+    private MovieScheduleInSite schedule;
     private List<MovieScreening> screeningList;
     private MovieScreeningRecyclerViewAdapter adapter;
 
@@ -64,34 +64,25 @@ public class MovieScreeningsFragment extends Fragment {
     public MovieScreeningsFragment() {
     }
 
-    public static MovieScreeningsFragment newInstance(Site site) {
-        MovieScreeningsFragment fragment = new MovieScreeningsFragment();
-        Bundle args = new Bundle();
-        args.putParcelable(Site.SITE_ARG_NAME, site);
-        fragment.setArguments(args);
-        return fragment;
+    public void setSite(Site site) {
+        this.site = site;
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof MovieScreeningsActivity) {
-            this.context = context;
-            MovieScreeningsActivity activity = (MovieScreeningsActivity) context;
-            this.schedule = activity.getSchedule();
+    public void setSchedule(MovieScheduleInSite schedule) {
+        this.schedule = schedule;
+    }
 
-            // Date today
-            getDateAndSetTitle();
-        } else {
-            Log.d(LOG_TAG, "Attached to activity different from MovieScreeningsActivity");
-        }
+    public static MovieScreeningsFragment newInstance(Site site, MovieScheduleInSite schedule) {
+        MovieScreeningsFragment fragment = new MovieScreeningsFragment();
+        fragment.setSite(site);
+        fragment.setSchedule(schedule);
+        return fragment;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        site = getArguments().getParcelable(Site.SITE_ARG_NAME);
     }
 
     @Override
@@ -110,7 +101,7 @@ public class MovieScreeningsFragment extends Fragment {
 
                     // Update list contents
                     screeningList.clear();
-                    screeningList.addAll(schedule.get(dateString));
+                    screeningList.addAll(schedule.getScreeningsList(dateString));
                     showTextIfEmpty(screeningList);
                     adapter.notifyDataSetChanged();
 
@@ -133,7 +124,7 @@ public class MovieScreeningsFragment extends Fragment {
 
     private void getMaxAndMinDate() {
         final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy");
-        List<String> dates = new ArrayList<>(schedule.keySet());
+        List<String> dates = new ArrayList<>(schedule.getDatesSet());
         sortListByDate(dates, dateFormat);
         if (maxDate == null) {
             try {
@@ -216,14 +207,16 @@ public class MovieScreeningsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_moviescreening_list, container, false);
 
-        Context context = view.getContext();
+        context = getActivity();
+        getDateAndSetTitle();
+
         recyclerView = (RecyclerView) view.findViewById(R.id.screenings_recycler);
         textView = (TextView) view.findViewById(R.id.movie_screenings_empty_text);
 
         // Set the adapter
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.addItemDecoration(new DividerItemDecoration(context));
-        List<MovieScreening> screenings = schedule.get(dateToday);
+        List<MovieScreening> screenings = schedule.getScreeningsList(dateToday);
         showTextIfEmpty(screenings);
         adapter = new MovieScreeningRecyclerViewAdapter(context, screeningList, site.getTicketsUrl());
         recyclerView.setAdapter(adapter);
