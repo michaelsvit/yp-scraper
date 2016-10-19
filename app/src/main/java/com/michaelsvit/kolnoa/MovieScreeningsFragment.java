@@ -45,9 +45,13 @@ public class MovieScreeningsFragment extends Fragment {
     private TextView textView;
 
     // String representing date today
+    private static final String DATE_TODAY_ARG = "date_today";
     private String dateToday;
 
     // Currently picked date
+    private static final String DAY_PICKED_ARG = "day_picked";
+    private static final String MONTH_PICKED_ARG = "month_picked";
+    private static final String YEAR_PICKED_ARG = "year_picked";
     private int dayPicked;
     // Starts from 0
     private int monthPicked;
@@ -89,6 +93,15 @@ public class MovieScreeningsFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.menu_movie_screenings, menu);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(DATE_TODAY_ARG, dateToday);
+        outState.putInt(DAY_PICKED_ARG, dayPicked);
+        outState.putInt(MONTH_PICKED_ARG, monthPicked);
+        outState.putInt(YEAR_PICKED_ARG, yearPicked);
     }
 
     @Override
@@ -208,7 +221,7 @@ public class MovieScreeningsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_moviescreening_list, container, false);
 
         context = getActivity();
-        getDateAndSetTitle();
+        getDateAndSetTitle(savedInstanceState);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.screenings_recycler);
         textView = (TextView) view.findViewById(R.id.movie_screenings_empty_text);
@@ -216,7 +229,7 @@ public class MovieScreeningsFragment extends Fragment {
         // Set the adapter
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.addItemDecoration(new DividerItemDecoration(context));
-        List<MovieScreening> screenings = schedule.getScreeningsList(dateToday);
+        List<MovieScreening> screenings = schedule.getScreeningsList(getDateString(dayPicked, monthPicked, yearPicked));
         showTextIfEmpty(screenings);
         adapter = new MovieScreeningRecyclerViewAdapter(context, screeningList, site.getTicketsUrl());
         recyclerView.setAdapter(adapter);
@@ -235,19 +248,26 @@ public class MovieScreeningsFragment extends Fragment {
         }
     }
 
-    private void getDateAndSetTitle() {
-        Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
-        int dayToday = calendar.get(Calendar.DAY_OF_MONTH);
-        // Starts from 0
-        int monthToday = calendar.get(Calendar.MONTH);
-        int yearToday = calendar.get(Calendar.YEAR);
-        dateToday = getDateString(dayToday, monthToday, yearToday);
-        setToolbarTitle(dayToday, monthToday, yearToday);
+    private void getDateAndSetTitle(Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+            int dayToday = calendar.get(Calendar.DAY_OF_MONTH);
+            // Starts from 0
+            int monthToday = calendar.get(Calendar.MONTH);
+            int yearToday = calendar.get(Calendar.YEAR);
+            dateToday = getDateString(dayToday, monthToday, yearToday);
 
-        // Set currently picked date to today
-        dayPicked = dayToday;
-        monthPicked = monthToday;
-        yearPicked = yearToday;
+            // Set currently picked date to today
+            dayPicked = dayToday;
+            monthPicked = monthToday;
+            yearPicked = yearToday;
+        } else {
+            dateToday = savedInstanceState.getString(DATE_TODAY_ARG);
+            dayPicked = savedInstanceState.getInt(DAY_PICKED_ARG);
+            monthPicked = savedInstanceState.getInt(MONTH_PICKED_ARG);
+            yearPicked = savedInstanceState.getInt(YEAR_PICKED_ARG);
+        }
+        setToolbarTitle(dayPicked, monthPicked, yearPicked);
     }
 
     private String getDateString(int day, int month, int year) {
