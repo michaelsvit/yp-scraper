@@ -17,7 +17,6 @@
     <TextView android:id="@+id/movie_screenings_empty_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
         android:text="@string/no_screenings_this_day"
         android:textColor="@color/textColorPrimary"
         android:textSize="24sp"
