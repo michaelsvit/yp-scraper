@@ -75,15 +75,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/screening_hours"
-        android:id="@+id/details_screening_button"
-        android:layout_gravity="center_horizontal" />
+        android:id="@+id/details_screening_button" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/trailer"
-        android:id="@+id/details_trailer_button"
-        android:layout_gravity="center_horizontal" />
+        android:id="@+id/details_trailer_button" />
 
 </LinearLayout>
 
