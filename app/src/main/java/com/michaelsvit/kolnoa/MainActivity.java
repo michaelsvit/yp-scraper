@@ -1,6 +1,7 @@
 package com.michaelsvit.kolnoa;
 
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -194,6 +195,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
+        webView.setBackgroundColor(Color.TRANSPARENT);
     }
 
     private class ParseResponse extends AsyncTask<String, Void, Void> {

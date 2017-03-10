@@ -8,17 +8,20 @@
     tools:context="com.michaelsvit.kolnoa.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-    <WebView android:id="@+id/fragment_movies_web_view"
+    <FrameLayout
+        android:id="@+id/main_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
-    <FrameLayout android:id="@+id/main_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-    <ProgressBar android:id="@+id/fragment_movies_progress_bar"
+    <ProgressBar
+        android:id="@+id/fragment_movies_progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center" />
+
+    <WebView
+        android:id="@+id/fragment_movies_web_view"
+        android:layout_width="match_parent"
+        android:layout_height="1px" />
 
 </FrameLayout>
