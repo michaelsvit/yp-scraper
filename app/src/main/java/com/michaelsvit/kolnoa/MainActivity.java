@@ -1,7 +1,6 @@
 package com.michaelsvit.kolnoa;
 
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -15,9 +14,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.JavascriptInterface;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import java.util.Locale;
@@ -32,8 +28,6 @@ public class MainActivity extends AppCompatActivity
     private ProgressBar progressBar;
 
     private Cinema cinema;
-    private String moviesHTMLResponse;
-    private WebView webView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +49,6 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         progressBar = (ProgressBar) findViewById(R.id.fragment_movies_progress_bar);
-        webView = (WebView) findViewById(R.id.fragment_movies_web_view);
 
         FragmentManager manager = getSupportFragmentManager();
         cinemaFragment = (CinemaRetainFragment) manager.findFragmentByTag(CinemaRetainFragment.FRAGMENT_ARG_NAME);
@@ -70,7 +63,6 @@ public class MainActivity extends AppCompatActivity
 
         // TODO: move this to drawer logic
         if (savedInstanceState == null) {
-            initWebView();
             fetchData();
 
             movieGridFragment = MovieGridFragment.newInstance(cinema);
@@ -156,46 +148,6 @@ public class MainActivity extends AppCompatActivity
 
     private void fetchData() {
         webView.loadUrl(cinema.getMoviesUrl());
-    }
-
-    private void initWebView() {
-        class JSInterface{
-            @JavascriptInterface
-            public void saveMoviesHTML(String moviesHTML){
-                if(moviesHTML.length() > 10000){
-                    moviesHTMLResponse = moviesHTML;
-                    webView.post(new Runnable(){
-                        @Override
-                        public void run() {
-                            webView.loadUrl(cinema.getScheduleUrl());
-                        }
-                    });
-                }
-            }
-
-            @JavascriptInterface
-            public void processHTML(String scheduleJSONResponse){
-                if(scheduleJSONResponse.length() > 10000){
-                    new ParseResponse().execute(moviesHTMLResponse, scheduleJSONResponse);
-                }
-            }
-        }
-
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.addJavascriptInterface(new JSInterface(), "Android");
-        webView.setWebViewClient(new WebViewClient(){
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                if (moviesHTMLResponse == null) {
-                    webView.loadUrl("javascript:window.Android.saveMoviesHTML("
-                            + "'<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');");
-                } else {
-                    webView.loadUrl("javascript:window.Android.processHTML(document.getElementsByTagName('html')[0].innerText);");
-                }
-            }
-        });
-        webView.setBackgroundColor(Color.TRANSPARENT);
     }
 
     private class ParseResponse extends AsyncTask<String, Void, Void> {

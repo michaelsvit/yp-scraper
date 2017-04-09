@@ -6,9 +6,7 @@ package com.michaelsvit.kolnoa;
 public class YesPlanet extends Cinema {
     public YesPlanet() {
         super("Yes Planet",
-                "http://www.yesplanet.co.il/",
-                "http://www.yesplanet.co.il/loadFunction?layoutId=10&layerId=1&exportCode=movies_filter",
-                "http://www.yesplanet.co.il/presentationsJSON",
+                "http://yesplanet.internet-bee.mobi/TREST_YP3/resources/info/merge/0/CATS,FEAT,TIX,PRSNT",
                 new YesPlanetDataParser());
     }
 }

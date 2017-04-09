@@ -15,19 +15,15 @@ public abstract class Cinema{
     }
 
     private String name;
-    private String url;
-    private String moviesUrl;
-    private String scheduleUrl;
+    private String dataUrl;
     private CinemaDataParser cinemaDataParser;
 
     private List<Movie> movies;
     private Schedule schedule;
 
-    public Cinema(String name, String url, String moviesUrl, String scheduleUrl, CinemaDataParser cinemaDataParser) {
+    public Cinema(String name, String dataUrl, CinemaDataParser cinemaDataParser) {
         this.name = name;
-        this.url = url;
-        this.moviesUrl = moviesUrl;
-        this.scheduleUrl = scheduleUrl;
+        this.dataUrl = dataUrl;
         this.cinemaDataParser = cinemaDataParser;
         movies = new ArrayList<>();
     }
@@ -36,16 +32,8 @@ public abstract class Cinema{
         return name;
     }
 
-    public String getUrl() {
-        return url;
-    }
-
-    public String getMoviesUrl() {
-        return moviesUrl;
-    }
-
-    public String getScheduleUrl() {
-        return scheduleUrl;
+    public String getDataUrl() {
+        return dataUrl;
     }
 
     public Movie getMovie(int position){
