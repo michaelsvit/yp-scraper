@@ -1,0 +1,22 @@
+[
+    {
+        "merged": "D:\\Dropbox\\Programming\\GitRepos\\Kolnoa\\app\\build\\intermediates\\res\\merged\\debug\\menu\\activity_main_drawer.xml",
+        "source": "D:\\Dropbox\\Programming\\GitRepos\\Kolnoa\\app\\src\\main\\res\\menu\\activity_main_drawer.xml"
+    },
+    {
+        "merged": "D:\\Dropbox\\Programming\\GitRepos\\Kolnoa\\app\\build\\intermediates\\res\\merged\\debug\\menu\\main.xml",
+        "source": "D:\\Dropbox\\Programming\\GitRepos\\Kolnoa\\app\\src\\main\\res\\menu\\main.xml"
+    },
+    {
+        "merged": "D:\\Dropbox\\Programming\\GitRepos\\Kolnoa\\app\\build\\intermediates\\res\\merged\\debug\\menu\\menu_ticket_purchase.xml",
+        "source": "D:\\Dropbox\\Programming\\GitRepos\\Kolnoa\\app\\src\\main\\res\\menu\\menu_ticket_purchase.xml"
+    },
+    {
+        "merged": "D:\\Dropbox\\Programming\\GitRepos\\Kolnoa\\app\\build\\intermediates\\res\\merged\\debug\\menu\\menu_movie_screenings.xml",
+        "source": "D:\\Dropbox\\Programming\\GitRepos\\Kolnoa\\app\\src\\main\\res\\menu\\menu_movie_screenings.xml"
+    },
+    {
+        "merged": "D:\\Dropbox\\Programming\\GitRepos\\Kolnoa\\app\\build\\intermediates\\res\\merged\\debug\\menu\\menu_movie_details.xml",
+        "source": "D:\\Dropbox\\Programming\\GitRepos\\Kolnoa\\app\\src\\main\\res\\menu\\menu_movie_details.xml"
+    }
+]

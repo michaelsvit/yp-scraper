@@ -16,7 +16,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import java.io.IOException;
 import java.util.Locale;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -147,7 +154,25 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void fetchData() {
-        webView.loadUrl(cinema.getMoviesUrl());
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(cinema.getDataUrl())
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    throw new IOException("Error retrieving data. Received response: " + response);
+                }
+
+                (new ParseResponse()).execute(response.body().string());
+            }
+        });
     }
 
     private class ParseResponse extends AsyncTask<String, Void, Void> {

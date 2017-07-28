@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="true"
+        jar="D:\Dropbox\Programming\GitRepos\Kolnoa\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="510aa6efc159983dfbffa676a0dae37568c0a46f">
+        <dex dex="D:\Dropbox\Programming\GitRepos\Kolnoa\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run_116c8f6ba1eae04ae87318e430f69250aeccba7f\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Michael\.gradle\caches\modules-2\files-2.1\com.squareup.okio\okio\1.11.0\840897fcd7223a8143f1d9b6f69714e7be34fd50\okio-1.11.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="840897fcd7223a8143f1d9b6f69714e7be34fd50">
+        <dex dex="D:\Dropbox\Programming\GitRepos\Kolnoa\app\build\intermediates\transforms\dex\debug\folders\1000\10\okio-1.11.0_6be43c998d651275f4a2037c7f7b2b81157d55a5\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Michael\.gradle\caches\modules-2\files-2.1\com.squareup.okhttp3\okhttp\3.6.0\69edde9fc4b01c9fd51d25b83428837478c27254\okhttp-3.6.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="69edde9fc4b01c9fd51d25b83428837478c27254">
+        <dex dex="D:\Dropbox\Programming\GitRepos\Kolnoa\app\build\intermediates\transforms\dex\debug\folders\1000\10\okhttp-3.6.0_70fbcd302948dde01be1e5169e8cac1557924bc7\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="D:\Dropbox\Programming\GitRepos\Kolnoa\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="092f08c189a9f6ea248f4e8965c3d3f9566fc785">
+        <dex dex="D:\Dropbox\Programming\GitRepos\Kolnoa\app\build\intermediates\transforms\dex\debug\folders\1000\10000\instant-run-bootstrap_2b7272c4d9fbd2925034ef4453e882924ad97617\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="D:\Dropbox\Programming\GitRepos\Kolnoa\app\libs\jsoup-1.9.2.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="edb0ddf3bd59dec0947f6eda75b6cf2264fc5e4b">
+        <dex dex="D:\Dropbox\Programming\GitRepos\Kolnoa\app\build\intermediates\transforms\dex\debug\folders\1000\2\jsoup-1.9.2_938eae184c952c48779ba4cb15fe18bc3184fe9c\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Michael\.gradle\caches\modules-2\files-2.1\com.jakewharton.picasso\picasso2-okhttp3-downloader\1.0.2\74a586d03a233d356290983d1ef23a64c1d122b2\picasso2-okhttp3-downloader-1.0.2.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="74a586d03a233d356290983d1ef23a64c1d122b2">
+        <dex dex="D:\Dropbox\Programming\GitRepos\Kolnoa\app\build\intermediates\transforms\dex\debug\folders\1000\10\picasso2-okhttp3-downloader-1.0.2_36f1818091282cfb40177526635ed3924f5fd404\classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="C:\Users\Michael\.gradle\caches\modules-2\files-2.1\com.squareup.picasso\picasso\2.5.2\7446d06ec8d4f7ffcc53f1da37c95f200dcb9387\picasso-2.5.2.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="7446d06ec8d4f7ffcc53f1da37c95f200dcb9387">
+        <dex dex="D:\Dropbox\Programming\GitRepos\Kolnoa\app\build\intermediates\transforms\dex\debug\folders\1000\10\picasso-2.5.2_3395eb9d84930c3a656948a189ede59dd2aaa7bf\classes.dex" />
+    </item>
+
+</items>

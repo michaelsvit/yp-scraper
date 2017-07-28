@@ -1,0 +1,4 @@
+#Sun Apr 09 11:51:39 IDT 2017
+base.0=D\:\\Dropbox\\Programming\\GitRepos\\Kolnoa\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\5\\slice_5
+renamed.0=classes.dex
+file.0=D\:\\Dropbox\\Programming\\GitRepos\\Kolnoa\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\5\\slice_5\\classes.dex
